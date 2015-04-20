@@ -1,0 +1,12 @@
+***** Make sure to change `mydb` to the name of your database you are testing on your local machine ****
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Administrator` (
+  `UserID` VARCHAR(45) NOT NULL,
+  `Password` VARCHAR(45) NOT NULL,
+  `First Name` VARCHAR(45) NOT NULL,
+  `Last Name` VARCHAR(45) NOT NULL,
+  `Email` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`UserID`),
+  UNIQUE INDEX `UserID_UNIQUE` (`UserID` ASC),
+  UNIQUE INDEX `Email_UNIQUE` (`Email` ASC))
+ENGINE = InnoDB
