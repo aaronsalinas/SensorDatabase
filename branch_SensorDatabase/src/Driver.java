@@ -8,7 +8,7 @@ public class Driver implements DatabaseInformation{
 	public static void main(String [] args) {
 		Database DB = null;
 		
-		//Database.showTables();
+		Database.showTables();
 		System.out.println(Database.checkIfAdminExists("Kelsey_Caraballo"));
 		
 	}
