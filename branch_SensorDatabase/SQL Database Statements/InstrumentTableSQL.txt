@@ -2,6 +2,5 @@
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Instrument` (
   `Instrument` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Instrument`),
-  UNIQUE INDEX `Instrument_UNIQUE` (`Instrument` ASC))
+  PRIMARY KEY (`Instrument`))
 ENGINE = InnoDB

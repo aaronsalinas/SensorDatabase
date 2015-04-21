@@ -1,0 +1,12 @@
+***** Make sure to change `mydb` to the name of your database you are testing on your local machine ****
+
+CREATE TABLE IF NOT EXISTS `mydb`.`InstrumentSerial` (
+  `Instrument` VARCHAR(45) NOT NULL,
+  `Serial` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Instrument`, `Serial`),
+  CONSTRAINT `Instrument`
+    FOREIGN KEY (`Instrument`)
+    REFERENCES `mydb`.`Instrument` (`Instrument`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
