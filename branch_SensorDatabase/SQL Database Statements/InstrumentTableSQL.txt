@@ -1,0 +1,7 @@
+***** Make sure to change `mydb` to the name of your database you are testing on your local machine ****
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Instrument` (
+  `Instrument` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Instrument`),
+  UNIQUE INDEX `Instrument_UNIQUE` (`Instrument` ASC))
+ENGINE = InnoDB
