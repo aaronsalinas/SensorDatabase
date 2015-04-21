@@ -1,0 +1,17 @@
+***** Make sure to change `mydb` to the name of your database you are testing on your local machine ****
+
+CREATE TABLE IF NOT EXISTS `mydb`.`ADCPCurrentData` (
+  `Instrument` VARCHAR(45) NOT NULL,
+  `Serial` VARCHAR(45) NOT NULL,
+  `Mooring` VARCHAR(45) NOT NULL,
+  `Latitude` DOUBLE NOT NULL,
+  `Longitude` DOUBLE NOT NULL,
+  `WaterDepth` DOUBLE NOT NULL,
+  `InstrumentDepth` DOUBLE NOT NULL,
+  PRIMARY KEY (`Instrument`, `Serial`),
+  CONSTRAINT `(Instrument, Serial)`
+    FOREIGN KEY (`Instrument` , `Serial`)
+    REFERENCES `mydb`.`InstrumentSerial` (`Instrument` , `Serial`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
