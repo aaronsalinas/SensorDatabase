@@ -9,4 +9,5 @@ public interface DatabaseInformation {
 	static final String DBCONN_ERROR = "Error in Connection to Database!";
 	static final String DBSTATEMENT_ERROR = "Error in Statement!";
 	static final String DBQUERY_ERROR = "Error in Query to Database!";
+	
 }

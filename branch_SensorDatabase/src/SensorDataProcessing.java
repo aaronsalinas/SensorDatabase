@@ -6,10 +6,10 @@ import java.util.List;
 
 
 /**
- * This class is used to process Sensor information/data retrived from specified text files
+ * This class is used to process Sensor information/data retrieved from specified text files
  * provided by the user.
  * 
- * @author aaronsalinas
+ * @author Aaron D. Salinas
  */
 public class SensorDataProcessing {
 	
@@ -21,16 +21,14 @@ public class SensorDataProcessing {
 	 * sensor read
 	 * @param fileName - name of file to extract sensor readings
 	 */
-	public List<String> toListFileDataReadings(String fileName){	 
+	public List<String> toListFileDataSensorReadings(String fileName){	 
 		BufferedReader br = null;
 		List<String> sensorReadings = new ArrayList<String>();
 		
 		try {
 			String sCurrentLine;
-			String inputString;
 			
 			br = new BufferedReader(new FileReader(fileName));
-			int i = 0;
 			while ((sCurrentLine = br.readLine()) != null) {
 				if(sCurrentLine.startsWith("*") == false){
 					sensorReadings.add(sCurrentLine);
@@ -67,10 +65,8 @@ public class SensorDataProcessing {
 
 		try {
 			String sCurrentLine;
-			String inputString;
 			
 			br = new BufferedReader(new FileReader(fileName));
-			int i = 0;
 			
 			//Skip past irrelevant information
 			while((sCurrentLine = br.readLine()) != null){
@@ -115,16 +111,14 @@ public class SensorDataProcessing {
 	 * @param fileName
 	 * @return
 	 */
-	public List<String> toListADCPCurrentData(String fileName){
+	public List<String> toListFileADCPCurrentData(String fileName){
 		List<String> ADCPCurrentData = new ArrayList<String>();
 		BufferedReader br = null;
 
 		try {
 			String sCurrentLine;
-			String inputString;
 			
 			br = new BufferedReader(new FileReader(fileName));
-			int i = 0;
 			
 			//Skip past irrelevant information
 			while((sCurrentLine = br.readLine()) != null){
@@ -158,4 +152,83 @@ public class SensorDataProcessing {
 		
 		return ADCPCurrentData;
 	}
+
+	
+	/**
+	 * This function returns the type of the instrument that the provided file 
+	 * has taken readings for
+	 * @param fileName - name of sensor data readings file
+	 * @return instrument - that file readings are for
+	 */
+	public String toStringFileInstrument(String fileName){
+		BufferedReader br = null;
+		String instrument = "";
+		
+		try {
+			String sCurrentLine;
+			
+			br = new BufferedReader(new FileReader(fileName));
+			while ((sCurrentLine = br.readLine()) != null) {
+				if(sCurrentLine.startsWith("*Instrument") == true){
+					instrument = instrument + sCurrentLine;
+					String[] temp;
+					temp = instrument.split(":");
+					instrument = temp[1];
+					instrument.trim();
+					break;
+				}
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null)br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return instrument;
+	}
+	
+	/**
+	 * This function returns the serial number of the instrument stored in the sensor 
+	 * data reading file. The file name is passed into the function from the user
+	 * @param fileName
+	 * @return serial
+	 */
+	public String toStringFileSerial(String fileName){
+		BufferedReader br = null;
+		String serial = "";
+		
+		try {
+			String sCurrentLine;
+			
+			br = new BufferedReader(new FileReader(fileName));
+			while ((sCurrentLine = br.readLine()) != null) {
+				if(sCurrentLine.startsWith("*Serial Number") == true){
+					serial = serial + sCurrentLine;
+					String[] temp;
+					temp = serial.split(":");
+					serial = temp[1];
+					serial.trim();
+					break;
+				}
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null)br.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		
+		return serial;
+	}
+
+	
 }
