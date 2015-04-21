@@ -12,6 +12,8 @@ public class SensorDatabaseAccess extends Database{
 	/* ************************************************************************ 
 	 * 								Add Functions
 	 *************************************************************************/
+	
+	
 	/**
 	 * addNewInstrument
 	 * <p>
@@ -169,7 +171,7 @@ public class SensorDatabaseAccess extends Database{
 	/* ************************************************************************ 
 	 * 								Query Functions
 	 *************************************************************************/
-	
+
 	/**
 	 * addInstrumentQuery
 	 * <p>
@@ -225,7 +227,6 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 
-	
 	/**
 	 * addInstrumentSerialQuery
 	 * <p>
@@ -401,7 +402,6 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
-	
 	/**
 	 * checkIfInstrumentExistsQuery
 	 * <p>
@@ -507,6 +507,7 @@ public class SensorDatabaseAccess extends Database{
 		return instrSerialExists;
 	}
 
+	
 
 }
 
