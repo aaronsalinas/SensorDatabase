@@ -14,8 +14,12 @@ import java.sql.Statement;
  */
 class Database implements DatabaseInformation{	
 	
-	/*
-	 * This function tests for a successful database connection
+	/**
+	 * showTables()
+	 * <p>
+	 * This function displays all of the tables in the database to standard
+	 * output
+	 * @author Aaron D. Salinas
 	 */
 	public static void showTables(){
 		try{

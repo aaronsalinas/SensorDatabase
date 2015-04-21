@@ -16,16 +16,16 @@ public class AdminDatabaseAccess extends Database{
 	 * for all administrators in the system
 	 * @return
 	 */
-	public static List<String> listAllAdministrators(){
+	public static List<String> toListAllAdministrators(){
 		List<String> admins = new ArrayList<String>();
 		String query = "SELECT * FROM Administrator";
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = listAdministratorsQuery(admins, query);
+		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
-			System.err.println("Failed Success in Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		
 		return admins;
@@ -39,7 +39,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> listAdministratorsByUsername(String userName){
+	public static List<String> toListAdministratorsByUsername(String userName){
 		List<String> admins = new ArrayList<String>();
 		String query = "SELECT * FROM Administrator " +
 					   "WHERE UserID = '" + userName +"';"; 
@@ -47,10 +47,10 @@ public class AdminDatabaseAccess extends Database{
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = listAdministratorsQuery(admins, query);
+		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
-			System.err.println("Failed Success in Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		
 		return admins;
@@ -64,7 +64,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> listAdministratorsByFirstName(String firstName){
+	public static List<String> toListAdministratorsByFirstName(String firstName){
 		List<String> admins = new ArrayList<String>();
 		String query = "SELECT * FROM Administrator " +
 					   "WHERE FirstName = '" + firstName +"';"; 
@@ -72,10 +72,10 @@ public class AdminDatabaseAccess extends Database{
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = listAdministratorsQuery(admins, query);
+		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
-			System.err.println("Failed Success in Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		
 		return admins;
@@ -88,7 +88,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> listAdministratorsByLastName(String lastName){
+	public static List<String> toListAdministratorsByLastName(String lastName){
 		List<String> admins = new ArrayList<String>();
 		String query = "SELECT * FROM Administrator " +
 					   "WHERE LastName = '" + lastName +"';"; 
@@ -96,10 +96,10 @@ public class AdminDatabaseAccess extends Database{
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = listAdministratorsQuery(admins, query);
+		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
-			System.err.println("Failed Success in Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		
 		return admins;
@@ -112,7 +112,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> listAdministratorsByLastName(String firstName, String lastName){
+	public static List<String> toListAdministratorsByLastName(String firstName, String lastName){
 		List<String> admins = new ArrayList<String>();
 		String query = "SELECT * FROM Administrator " +
 					   "WHERE FirstName = '" + firstName + "AND "
@@ -121,10 +121,10 @@ public class AdminDatabaseAccess extends Database{
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = listAdministratorsQuery(admins, query);
+		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
-			System.err.println("Failed Success in Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		
 		return admins;
@@ -137,7 +137,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> listAdministratorsByEmail(String email){
+	public static List<String> toListAdministratorsByEmail(String email){
 		List<String> admins = new ArrayList<String>();
 		String query = "SELECT * FROM Administrator " +
 					   "WHERE Email = '" + email + "';"; 
@@ -145,10 +145,10 @@ public class AdminDatabaseAccess extends Database{
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = listAdministratorsQuery(admins, query);
+		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
-			System.err.println("Failed Success in Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		
 		return admins;
@@ -165,7 +165,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @param query
 	 * @return
 	 */
-	private static boolean listAdministratorsQuery(List<String> admins, String query){
+	private static boolean toListAdministratorsQuery(List<String> admins, String query){
 		boolean success = true;
 		
 		//Connect to database
@@ -198,7 +198,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error In Query");
+			System.err.println(DBQUERY_ERROR);
 			success = false;
 		}
 		finally{
@@ -271,7 +271,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error Connecting to the Database");
+			System.err.println(DBCONN_ERROR);
 			success = false;
 		}
 		try{
@@ -280,7 +280,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error Creating Statement Object");
+			System.err.println(DBSTATEMENT_ERROR);
 			success = false;
 		}
 		try{
@@ -297,7 +297,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(SQLException exc){
 			exc.printStackTrace();
-			System.out.println("Error In Query");
+			System.out.println(DBQUERY_ERROR);
 			success = false;
 		}
 		finally{
@@ -344,7 +344,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error Connecting to the Database");
+			System.err.println(DBCONN_ERROR);
 			success = false;
 		}
 		try{
@@ -353,7 +353,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error Creating Statement Object");
+			System.err.println(DBSTATEMENT_ERROR);
 			success = false;
 		}
 		try{
@@ -363,7 +363,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(SQLException exc){
 			exc.printStackTrace();
-			System.out.println("Error In Query");
+			System.out.println(DBQUERY_ERROR);
 			success = false;
 		}
 		finally{
@@ -398,14 +398,14 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error in Connecting to Database");
+			System.err.println(DBCONN_ERROR);
 		}
 		try{
 			//2. Create a statement
 			myStmt = myConn.createStatement();
 		}catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error in Creating Statement");
+			System.err.println(DBSTATEMENT_ERROR);
 		}
 		try{	
 			//3, Execute SQL query
@@ -416,7 +416,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error In Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		finally{
 			//Disconnect from Database
@@ -426,8 +426,6 @@ public class AdminDatabaseAccess extends Database{
 		
 		return success;
 	}
-	
-	
 	
 	/**
 	 * checkIfAdminExists
@@ -469,7 +467,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error In Query");
+			System.err.println(DBQUERY_ERROR);
 		}
 		finally{
 			//Disconnect from Database
@@ -530,7 +528,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error Connecting to the Database");
+			System.err.println(DBCONN_ERROR);
 			success = false;
 		}
 		try{
@@ -539,7 +537,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(Exception exc){
 			exc.printStackTrace();
-			System.err.println("Error Creating Statement Object");
+			System.err.println(DBSTATEMENT_ERROR);
 			success = false;
 		}
 		try{
@@ -562,7 +560,7 @@ public class AdminDatabaseAccess extends Database{
 		}
 		catch(SQLException exc){
 			exc.printStackTrace();
-			System.out.println("Error In Query");
+			System.out.println(DBQUERY_ERROR);
 			success = false;
 		}
 		finally{
