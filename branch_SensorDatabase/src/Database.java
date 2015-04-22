@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class stores functionality for interacting with the 
@@ -21,12 +23,12 @@ class Database implements DatabaseInformation{
 	/**IN PROGRESS
 	 * @return
 	 */
-	static public boolean createTable(){
+	static protected boolean createTable(String query){
 		boolean success = false;
-		String query = "CREATE TABLE IF NOT EXISTS `Sensor Database`.`SampleTable` (`Attribute1` INT NOT NULL,"
-				+ "`Attribute2` VARCHAR(45) NOT NULL, PRIMARY KEY (`Attribute1`, `Attribute2`)) ENGINE = InnoDB";
 		
-		success = createTableQuery(query);
+		if(createTableQuery(query)){
+			success = true;
+		}
 		
 		return success;
 	}
@@ -119,6 +121,9 @@ class Database implements DatabaseInformation{
 		
 		return success;
 	}
+	
+	
+	
 	
 	/**
 	 * This function calls a query that checks if a table, whose name is passed

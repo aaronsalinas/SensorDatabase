@@ -9,10 +9,183 @@ import java.util.List;
 
 public class SensorDatabaseAccess extends Database{
 	
+
+	/* ************************************************************************ 
+	 * 								Create Functions
+	 *************************************************************************/
+	/**
+	 * This function Creates a new instrument tables that stores sensor readings for the type of instrument
+	 * it is. The name of the table is identical to the name of the instrument. A List of Pairs is passed into
+	 * the function storing the attribute name and data type as strings, respectively to each pair. The key of the
+	 * a pair should be the name of the attribute, the value should be the data type 
+	 *<p>
+	 * NOTE: the data type of each attribute should be the proper constant variable as found in the DatabaseUnits
+	 * 		 class. 
+	 * @param instrument - the name of the table 
+	 * @param columnList
+	 * @return
+	 */
+	static public boolean createInstrumentReadingsTable(String instrument, List<Pair<String, String>> columnList){
+		boolean success = false;
+		
+		//Check that datatypes are in correct format
+		for(int i = 0; i < columnList.size(); i++){
+			if(!DatabaseUnits.validDatabaseDatatype(columnList.get(i).getValue())){
+				System.err.println("Incorrect Database Datatype");
+				return false; //returns false if a datatype is incorrect
+			}
+		}
+				
+		/*	**Create Statement Template**
+		 * 
+		 * 	CREATE TABLE table_name
+		 * 	(
+		 * 		column_name1 data_type(size),
+		 * 		column_name2 data_type(size),
+		 *		column_name3 data_type(size)
+		 * 	)
+		 */
+		String query = "CREATE TABLE " + instrument + "(";
+		for(int i = 0; i < columnList.size(); i++){
+			query = query + "`" + columnList.get(i).getKey() + "` "; // name of attribute for current column
+			query = query + columnList.get(i).getValue();
+			if(i < columnList.size() - 1){
+				query = query + ", "; //trailing comma after each column attribute value
+			}
+			
+		}
+		query = query + ")";
+		
+		
+		if(!checkIfTableExists(instrument)){
+			if(createTable(query)){
+				success = true; //Table successfully created
+			}
+		}
+		
+		
+		return success;
+	}
+	
+	/**
+	 * This function Creates a new instrument tables that stores sensor readings for the type of instrument
+	 * it is. The name of the table is identical to the name of the instrument. A List of Pairs is passed into
+	 * the function storing the attribute name and data type as strings, respectively to each pair. The key of the
+	 * a pair should be the name of the attribute, the value should be the data type. A string storing the attribute
+	 * which is the primary key of the table is passed into the function
+	 * 
+	 * <p>
+	 * NOTE: the data type of each attribute should be the proper constant variable as found in the DatabaseUnits
+	 * 		 class. 
+	 * @param instrument
+	 * @param columnList
+	 * @param primaryKey
+	 * @return
+	 */
+	static public boolean createInstrumentReadingsTable(String instrument, List<Pair<String, String>> columnList, String primaryKey){
+		boolean success = false;
+		
+		//Check that datatypes are in correct format
+		for(int i = 0; i < columnList.size(); i++){
+			if(!DatabaseUnits.validDatabaseDatatype(columnList.get(i).getValue())){
+				System.err.println("Incorrect Database Datatype");
+				return false; //returns false if a datatype is incorrect
+			}
+		}
+		
+		/*	**Create Statement Template**
+		 * 
+		 * 	CREATE TABLE table_name
+		 * 	(
+		 * 		column_name1 data_type(size),
+		 * 		column_name2 data_type(size),
+		 *		column_name3 data_type(size)
+		 * 	)
+		 */
+		String query = "CREATE TABLE " + instrument + "(";
+		for(int i = 0; i < columnList.size(); i++){
+			query = query + "`" + columnList.get(i).getKey() + "` "; // name of attribute for current column
+			query = query + columnList.get(i).getValue();
+			query = query + ", "; //trailing comma after each column attribute value
+		}
+		query = query + "PRIMARY KEY(`" + primaryKey + "`)";
+		query = query + ")";
+		
+		
+		if(!checkIfTableExists(instrument)){
+			if(createTable(query)){
+				success = true; //Table successfully created
+			}
+		}
+		
+		
+		return success;
+	}
+	
+	/**
+	 * This function Creates a new instrument tables that stores sensor readings for the type of instrument
+	 * it is. The name of the table is identical to the name of the instrument. A List of Pairs is passed into
+	 * the function storing the attribute name and data type as strings, respectively to each pair. The key of the
+	 * a pair should be the name of the attribute, the value should be the data type. A string storing the attribute
+	 * which is the primary key of the table is passed into the function
+	 * 
+	 * <p>
+	 * NOTE: the data type of each attribute should be the proper constant variable as found in the DatabaseUnits
+	 * 		 class. 
+	 * @param instrument
+	 * @param columnList
+	 * @param primaryKeyList
+	 * @return
+	 */
+	static public boolean createInstrumentReadingsTable(String instrument, List<Pair<String, String>> columnList, List<String> primaryKeyList){
+		boolean success = false;
+		
+		//Check that datatypes are in correct format
+		for(int i = 0; i < columnList.size(); i++){
+			if(!DatabaseUnits.validDatabaseDatatype(columnList.get(i).getValue())){
+				System.err.println("Incorrect Database Datatype");
+				return false; //returns false if a datatype is incorrect
+			}
+		}
+		
+		/*	**Create Statement Template**
+		 * 
+		 * 	CREATE TABLE table_name
+		 * 	(
+		 * 		column_name1 data_type(size),
+		 * 		column_name2 data_type(size),
+		 *		column_name3 data_type(size)
+		 * 	)
+		 */
+		String query = "CREATE TABLE " + instrument + "(";
+		//Assign columns of table
+		for(int i = 0; i < columnList.size(); i++){
+			query = query + "`" + columnList.get(i).getKey() + "` "; // name of attribute for current column
+			query = query + columnList.get(i).getValue();
+			query = query + ", "; //trailing comma after each column attribute value
+		}
+		//Assign Primary Key
+		query = query + "PRIMARY KEY(";
+		for(int i = 0; i < primaryKeyList.size(); i++){
+			query = query + "`" + primaryKeyList.get(i) + "`";
+			if(i < columnList.size() - 1){
+				query = query + ", ";
+			}
+		}
+		query = query + "))";
+		
+		if(!checkIfTableExists(instrument)){
+			if(createTable(query)){
+				success = true; //Table successfully created
+			}
+		}
+		
+		return success;
+	}
+	
 	/* ************************************************************************ 
 	 * 								Add Functions
 	 *************************************************************************/
-	
 	
 	/**
 	 * addNewInstrument
@@ -29,10 +202,12 @@ public class SensorDatabaseAccess extends Database{
 		//Check if instrument already exists in the database
 		if(checkIfInstrumentExists(instrument) == false){
 			//Add instrument into the database
-			success = addInstrumentQuery(instrument);
+			if(addInstrumentQuery(instrument)){
+				success = true;
+			}
 		}
 		else{
-			System.out.println("Error: Instrument Already Exists In Database!");
+			System.err.println("Error: Instrument Already Exists In Database!");
 		}
 		
 		return success;
@@ -49,12 +224,18 @@ public class SensorDatabaseAccess extends Database{
 	 * @param serial
 	 */
 	static public boolean addInstrumentSerial(String instrument, String serial){
-		boolean success = false;
+		boolean success = false; //Assume Failue
 		
-		if(checkIfInstrumentExists(instrument) == true){
+		if(!checkIfInstrumentExists(instrument)){
+			System.err.println("ERROR: Instrument Not Stored in Database");
+			return false;
+		}
+		else{
 			//Add into database if it doesn't already exist
 			if(checkIfInstrumentSerialExists(instrument, serial) == false)
-				success = addInstrumentSerialQuery(instrument, serial); //call query to add instr/serial
+				if(addInstrumentSerialQuery(instrument, serial)){//call query to add instr/serial
+					success = true;
+				}
 		}
 		if(!success){
 			System.out.println("Instrument/Serial not added to database!");
@@ -80,9 +261,29 @@ public class SensorDatabaseAccess extends Database{
 		boolean success = false; //assume failure
 		
 		if(checkIfInstrumentExists(instrument) == true){
-			success = removeInstrumentQuery(instrument);
-		}else{
-			System.out.println("Instrument Does Not Exists In Database");
+			if(removeInstrumentQuery(instrument)){
+				success = true;
+			}
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * This function removes a tuple from the InstrumentSerial table in the database.
+	 * The instrument and serial values are passed into the function. Returns true 
+	 * if the tuple is successfully removed, otherwise returns false
+	 * @param instrument
+	 * @param serial
+	 * @return
+	 */
+	static public boolean removeInstrumentSerial(String instrument, String serial){
+		boolean success = false; //Assume failure
+		
+		if(checkIfInstrumentSerialExists(instrument, serial)){
+			if(removeInstrumentSerialQuery(instrument, serial)){
+				success = true;
+			}
 		}
 		
 		return success;
@@ -171,7 +372,6 @@ public class SensorDatabaseAccess extends Database{
 	/* ************************************************************************ 
 	 * 								Query Functions
 	 *************************************************************************/
-
 	/**
 	 * addInstrumentQuery
 	 * <p>
@@ -334,7 +534,61 @@ public class SensorDatabaseAccess extends Database{
 		
 		return success;
 	}
+	
+	/**
+	 * This function calls a query which removes a tuple from the InstrumentSerial
+	 * table in the database, provided the instrument and serial values, respectively
+	 * @param instrument
+	 * @param serial
+	 * @return
+	 */
+	static private boolean removeInstrumentSerialQuery(String instrument, String serial){
+		boolean success = true; //Assume success
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		int myRs;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBCONN_ERROR);
+			success = false;
+		}
+		try{
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBSTATEMENT_ERROR);
+			success = false;
+		}
+		try{
+			//3, Execute SQL query
+			query = "DELETE FROM InstrumentSerial WHERE Instrument = '" + instrument + "' "
+					+ "AND Serial = '" + serial + "';";	
+			
+			myRs = myStmt.executeUpdate(query); //Execute Query (delete instrument from database)	
+		}
+		catch(SQLException exc){
+			exc.printStackTrace();
+			System.out.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
 		
+		return success;
+	}
+	
+	
 	/**
 	 * toListQuery
 	 * <p>
