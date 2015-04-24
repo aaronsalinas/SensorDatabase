@@ -10,8 +10,8 @@ public class Pair<Key, Value>{
 	/* *************************************
 	 * 		Class Member Variables
 	 ***************************************/
-	private Key key;
-	private Value value;
+	private Key first;
+	private Value second;
 	
 	/* *************************************
 	 * 			Constructors
@@ -24,30 +24,30 @@ public class Pair<Key, Value>{
 	 * @param value
 	 */
 	public Pair(Key key, Value value){
-		this.key = key;
-		this.value = value;
+		this.first = key;
+		this.second = value;
 	}
 	
 	/* *************************************
 	 * 			Access Functions
 	 ***************************************/
-	public Key getKey(){
-		return this.key;
+	public Key getFirst(){
+		return this.first;
 	}
 	
-	public Value getValue(){
-		return this.value;
+	public Value getSecond(){
+		return this.second;
 	}
 	
 	/* *************************************
 	 * 			Modifiers
 	 ***************************************/
 	public void setKey(Key key){
-		this.key = key;
+		this.first = key;
 	}
 	
 	public void setValue(Value value){
-		this.value = value;
+		this.second = value;
 	}
 	
 }
