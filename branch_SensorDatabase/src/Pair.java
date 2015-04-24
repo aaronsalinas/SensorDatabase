@@ -23,9 +23,9 @@ public class Pair<Key, Value>{
 	 * @param key
 	 * @param value
 	 */
-	public Pair(Key key, Value value){
-		this.first = key;
-		this.second = value;
+	public Pair(Key first, Value second){
+		this.first = first;
+		this.second = second;
 	}
 	
 	/* *************************************
@@ -42,12 +42,12 @@ public class Pair<Key, Value>{
 	/* *************************************
 	 * 			Modifiers
 	 ***************************************/
-	public void setKey(Key key){
-		this.first = key;
+	public void setFirst(Key first){
+		this.first = first;
 	}
 	
-	public void setValue(Value value){
-		this.second = value;
+	public void setSecond(Value second){
+		this.second = second;
 	}
 	
 }
