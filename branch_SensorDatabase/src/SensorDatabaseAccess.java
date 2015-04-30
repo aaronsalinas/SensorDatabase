@@ -13,170 +13,23 @@ public class SensorDatabaseAccess extends Database{
 	/* ************************************************************************ 
 	 * 								Create Functions
 	 *************************************************************************/
-	/**
-	 * This function Creates a new instrument tables that stores sensor readings for the type of instrument
-	 * it is. The name of the table is identical to the name of the instrument. A List of Pairs is passed into
-	 * the function storing the attribute name and data type as strings, respectively to each pair. The key of the
-	 * a pair should be the name of the attribute, the value should be the data type 
-	 *<p>
-	 * NOTE: the data type of each attribute should be the proper constant variable as found in the DatabaseUnits
-	 * 		 class. 
-	 * @param instrument - the name of the table 
-	 * @param columnList
-	 * @return
-	 */
-	static public boolean createInstrumentReadingsTable(String instrument, List<Pair<String, String>> columnList){
+	
+	static public boolean createInstrumentSensorReadingTable(String instrument, List<Pair<String, String> > attrDataTypeList){
 		boolean success = false;
 		
-		//Check that datatypes are in correct format
-		for(int i = 0; i < columnList.size(); i++){
-			if(!DatabaseUnits.validDatabaseDatatype(columnList.get(i).getValue())){
-				System.err.println("Incorrect Database Datatype");
-				return false; //returns false if a datatype is incorrect
-			}
-		}
-				
-		/*	**Create Statement Template**
-		 * 
-		 * 	CREATE TABLE table_name
-		 * 	(
-		 * 		column_name1 data_type(size),
-		 * 		column_name2 data_type(size),
-		 *		column_name3 data_type(size)
-		 * 	)
-		 */
-		String query = "CREATE TABLE " + instrument + "(";
-		for(int i = 0; i < columnList.size(); i++){
-			query = query + "`" + columnList.get(i).getKey() + "` "; // name of attribute for current column
-			query = query + columnList.get(i).getValue();
-			if(i < columnList.size() - 1){
-				query = query + ", "; //trailing comma after each column attribute value
-			}
-			
-		}
-		query = query + ")";
-		
-		
-		if(!checkIfTableExists(instrument)){
-			if(createTable(query)){
-				success = true; //Table successfully created
-			}
-		}
-		
+		// WORK ON THIS!
 		
 		return success;
 	}
 	
-	/**
-	 * This function Creates a new instrument tables that stores sensor readings for the type of instrument
-	 * it is. The name of the table is identical to the name of the instrument. A List of Pairs is passed into
-	 * the function storing the attribute name and data type as strings, respectively to each pair. The key of the
-	 * a pair should be the name of the attribute, the value should be the data type. A string storing the attribute
-	 * which is the primary key of the table is passed into the function
-	 * 
-	 * <p>
-	 * NOTE: the data type of each attribute should be the proper constant variable as found in the DatabaseUnits
-	 * 		 class. 
-	 * @param instrument
-	 * @param columnList
-	 * @param primaryKey
-	 * @return
-	 */
-	static public boolean createInstrumentReadingsTable(String instrument, List<Pair<String, String>> columnList, String primaryKey){
+	static public boolean createADCPCurrentTable(String instrument,
+												ArrayList<Pair<String, String> > ADCPAttrDataType){
 		boolean success = false;
 		
-		//Check that datatypes are in correct format
-		for(int i = 0; i < columnList.size(); i++){
-			if(!DatabaseUnits.validDatabaseDatatype(columnList.get(i).getValue())){
-				System.err.println("Incorrect Database Datatype");
-				return false; //returns false if a datatype is incorrect
-			}
-		}
-		
-		/*	**Create Statement Template**
-		 * 
-		 * 	CREATE TABLE table_name
-		 * 	(
-		 * 		column_name1 data_type(size),
-		 * 		column_name2 data_type(size),
-		 *		column_name3 data_type(size)
-		 * 	)
-		 */
-		String query = "CREATE TABLE " + instrument + "(";
-		for(int i = 0; i < columnList.size(); i++){
-			query = query + "`" + columnList.get(i).getKey() + "` "; // name of attribute for current column
-			query = query + columnList.get(i).getValue();
-			query = query + ", "; //trailing comma after each column attribute value
-		}
-		query = query + "PRIMARY KEY(`" + primaryKey + "`)";
-		query = query + ")";
-		
-		
-		if(!checkIfTableExists(instrument)){
-			if(createTable(query)){
-				success = true; //Table successfully created
-			}
-		}
-		
-		
-		return success;
-	}
-	
-	/**
-	 * This function Creates a new instrument tables that stores sensor readings for the type of instrument
-	 * it is. The name of the table is identical to the name of the instrument. A List of Pairs is passed into
-	 * the function storing the attribute name and data type as strings, respectively to each pair. The key of the
-	 * a pair should be the name of the attribute, the value should be the data type. A string storing the attribute
-	 * which is the primary key of the table is passed into the function
-	 * 
-	 * <p>
-	 * NOTE: the data type of each attribute should be the proper constant variable as found in the DatabaseUnits
-	 * 		 class. 
-	 * @param instrument
-	 * @param columnList
-	 * @param primaryKeyList
-	 * @return
-	 */
-	static public boolean createInstrumentReadingsTable(String instrument, List<Pair<String, String>> columnList, List<String> primaryKeyList){
-		boolean success = false;
-		
-		//Check that datatypes are in correct format
-		for(int i = 0; i < columnList.size(); i++){
-			if(!DatabaseUnits.validDatabaseDatatype(columnList.get(i).getValue())){
-				System.err.println("Incorrect Database Datatype");
-				return false; //returns false if a datatype is incorrect
-			}
-		}
-		
-		/*	**Create Statement Template**
-		 * 
-		 * 	CREATE TABLE table_name
-		 * 	(
-		 * 		column_name1 data_type(size),
-		 * 		column_name2 data_type(size),
-		 *		column_name3 data_type(size)
-		 * 	)
-		 */
-		String query = "CREATE TABLE " + instrument + "(";
-		//Assign columns of table
-		for(int i = 0; i < columnList.size(); i++){
-			query = query + "`" + columnList.get(i).getKey() + "` "; // name of attribute for current column
-			query = query + columnList.get(i).getValue();
-			query = query + ", "; //trailing comma after each column attribute value
-		}
-		//Assign Primary Key
-		query = query + "PRIMARY KEY(";
-		for(int i = 0; i < primaryKeyList.size(); i++){
-			query = query + "`" + primaryKeyList.get(i) + "`";
-			if(i < columnList.size() - 1){
-				query = query + ", ";
-			}
-		}
-		query = query + "))";
-		
-		if(!checkIfTableExists(instrument)){
-			if(createTable(query)){
-				success = true; //Table successfully created
+		if(!checkIfADCPCurrentTableExists(instrument)){
+			success = createADCPCurrentTableQuery(instrument, ADCPAttrDataType);
+			if(!success){
+				System.out.println("ERROR: ADCP Current Data Table For" + instrument + "Not Added To Database!");
 			}
 		}
 		
@@ -240,6 +93,49 @@ public class SensorDatabaseAccess extends Database{
 		if(!success){
 			System.out.println("Instrument/Serial not added to database!");
 		}
+		
+		return success;
+	}
+	
+	
+	static public boolean addADCPCurrentData(String instrument, String serial, String timeStamp, 
+											ArrayList<Pair<String, String> > ADCPAttrVal){
+		boolean success = false;
+		
+		if(!checkIfADCPCurrentDataExistsQuery(instrument, serial)){
+			success = addADCPCurrentDataQuery(instrument, serial, timeStamp, ADCPAttrVal);
+			
+			if(!success){
+				System.out.println("ADCP Current Data For " + instrument + " " + serial + " Not Added To Database!");
+			}
+		}
+		else{
+			System.out.println("ERROR: ADCP Current Data for " + instrument + " " + serial + "Already Exists!");
+		}
+		
+		return success;
+	}
+	
+	static public boolean updateADCPCurrentData(String instrument, String serial, String timeStamp,
+												ArrayList<Pair<String, String> > attrValList){
+		boolean success = false;
+				
+		//Check if ADCP Current Data tuple exists in table
+		if(!checkIfADCPCurrentDataExists(instrument, serial)){
+			//If not in table, add row for Instrument/Serial
+			success = addADCPCurrentData(instrument, serial, timeStamp, attrValList);
+			if(!success) System.out.println("ERROR: ADCP Current Data For " + instrument + " " 
+																+ serial + "Not Added to Database");
+		}
+		else{
+			if(checkIfADCPCurrentDataNewer(instrument, serial, timeStamp)){
+				success = updateAFCPCurrentDataQuery(instrument, serial, attrValList);
+				if(!success) System.out.println("ERROR: ADCP Current Data For " + instrument + " "
+												+ serial + "Not Updated!");
+			}
+			
+		}
+		
 		
 		return success;
 	}
@@ -368,6 +264,46 @@ public class SensorDatabaseAccess extends Database{
 		return exists;
 	}
 	
+	static public boolean checkIfADCPCurrentTableExists(String instrument){
+		boolean exists = false;
+		
+		exists = checkIfADCPCurrentTableExistsQuery(instrument); 
+		
+		return exists;
+	}
+	
+	static public boolean checkIfADCPCurrentDataExists(String instrument, String serial){
+		boolean exists = false;
+		
+		exists = checkIfADCPCurrentDataExistsQuery(instrument, serial);
+		
+		return exists;
+		
+	}
+	
+	static public boolean checkIfADCPCurrentDataNewer(String instrument, String serial, String timeStamp){
+		boolean newer = false;
+		
+		newer = checkIfADCPCurrentDataNewerQuery(instrument, serial, timeStamp);
+				
+		return newer;
+	}
+	
+	static public boolean checkIfInstrumentSensorReadingTableExists(String instrument){
+		boolean exists = false;
+		
+		exists = checkIfInstrumentSensorReadingTableExistsQuery(instrument);
+		
+		return exists;
+	}
+	
+	static public boolean checkIfInstrumentSensorReadingExists(String instrument, String serial, String timeStamp){
+		boolean exists = false;
+		
+		exists = checkIfInstrumentSensorReadingExistsQuery(instrument, serial, timeStamp);
+		
+		return exists;
+	}
 	
 	/* ************************************************************************ 
 	 * 								Query Functions
@@ -463,7 +399,7 @@ public class SensorDatabaseAccess extends Database{
 		}
 		try{
 			//3, Execute SQL query
-			query = "INSERT INTO InstrumentSerial (Instrument, Serial)"
+			query = "INSERT INTO `InstrumentSerial` (`Instrument`, `Serial Number`)"
 					+ " VALUES('" + instrument + "', '" + serial + "')";			
 			
 			myRs = myStmt.executeUpdate(query); //Execute Query (add new instrument)			
@@ -482,6 +418,193 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	static private boolean addADCPCurrentDataQuery(String instrument, String serial,
+													String timeStamp, ArrayList<Pair<String, String> > attrValList){
+		boolean success = true; //assume success;
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		int myRs;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBCONN_ERROR);
+			success = false;
+		}
+		try{
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBSTATEMENT_ERROR);
+			success = false;
+		}
+		try{
+			//3, Execute SQL query
+			String tableName = "ADCPCurrentData_" + instrument;
+			String attributes = "";
+			String values = "";
+		
+			query = "INSERT INTO `" + tableName + "` (";
+			
+			for(int i = 0; i < attrValList.size(); i++){
+				if(i > 0){
+					attributes = attributes + ",";
+					values = values + ",";
+				}
+				attributes = attributes + "`" + attrValList.get(i).first +"`";
+				values = values + "'" + attrValList.get(i).second +"'";
+			}
+			query = query + attributes + ") VALUES(" + values;
+			query = query + ")";
+								
+			myRs = myStmt.executeUpdate(query); //Execute Query (add new ADCP current reading for instrument)			
+		}
+		catch(SQLException exc){
+			exc.printStackTrace();
+			System.out.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+		
+		
+		return success;
+	}
+
+	private static boolean createADCPCurrentTableQuery(String instrument,
+			ArrayList<Pair<String, String>> ADCPAttrDataType) {
+		
+		boolean success = true; //assume success;
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		int myRs;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBCONN_ERROR);
+			success = false;
+		}
+		try{
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBSTATEMENT_ERROR);
+			success = false;
+		}
+		try{
+			//3, Execute SQL query
+			query = "CREATE TABLE IF NOT EXISTS `ADCPCurrentData_" + instrument + "` (";		
+			
+			//Add Table Columns
+			for(int i = 0; i < ADCPAttrDataType.size(); i++){
+				query = query + "`" + ADCPAttrDataType.get(i).first + "` ";
+				query = query + ADCPAttrDataType.get(i).second + " NOT NULL , ";
+			}
+			//Add Primary Key
+			query = query + "PRIMARY KEY (`Instrument`,`Serial Number`,`ReadTime`), ";
+			
+			//Add Constraints
+			query = query + "CONSTRAINT `(Instrument, Serial Number)` ";
+			query = query + "FOREIGN KEY (`Instrument` , `Serial Number`) ";
+			query = query + "REFERENCES `InstrumentSerial` (`Instrument` , `Serial Number`)";
+			
+			query = query + ")";
+			
+			System.out.println(query);
+			
+			myRs = myStmt.executeUpdate(query); //Execute Query (create ADCP Table for instrument)			
+	
+		}
+		catch(SQLException exc){
+			exc.printStackTrace();
+			System.out.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+	
+		
+		return success;
+	}
+	
+	static private boolean updateAFCPCurrentDataQuery(String instrument, String serial, ArrayList<Pair<String, String> > attrVal){
+		boolean success = true; //assume success;
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		int myRs;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBCONN_ERROR);
+			success = false;
+		}
+		try{
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBSTATEMENT_ERROR);
+			success = false;
+		}
+		try{
+			//3, Execute SQL query
+			String tableName = "ADCPCurrentData_" + instrument;
+			String attributes = "";
+			String values = "";
+		
+			query = "UPDATE `" + tableName + "` SET ";
+			
+			for(int i = 0; i < attrVal.size(); i++){
+				if(i > 0){
+					query = query + ",";
+				}
+				query = query + "`" + attrVal.get(i).first + "`=\'" + attrVal.get(i).second + "\'";
+			}
+			
+			query = query + " WHERE `Instrument`=\'" + instrument + "\' AND `Serial Number`=\'" + serial + "\'";
+								
+			myRs = myStmt.executeUpdate(query); //Execute Query (add new ADCP current reading for instrument)			
+		}
+		catch(SQLException exc){
+			exc.printStackTrace();
+			System.out.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+		
+		
+		return success;
+	}
+		
 	/**
 	 * removeInstrumentQuery
 	 * <p>
@@ -588,7 +711,6 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
-	
 	/**
 	 * toListQuery
 	 * <p>
@@ -680,8 +802,8 @@ public class SensorDatabaseAccess extends Database{
 			myStmt = myConn.createStatement();
 			//3, Execute SQL query
 			query = "SELECT COUNT(*) "
-				  + "FROM Instrument "
-				  + "WHERE Instrument = \'" + instrument + "\';";
+				  + "FROM `Instrument` "
+				  + "WHERE `Instrument` = \'" + instrument + "\';";
 				
 			myRs = myStmt.executeQuery(query);
 			//4. Process the result set
@@ -733,9 +855,9 @@ public class SensorDatabaseAccess extends Database{
 			myStmt = myConn.createStatement();
 			//3, Execute SQL query
 			query = "SELECT COUNT(*) "
-				  + "FROM InstrumentSerial "
-				  + "WHERE Instrument = \'" + instrument + "\' AND "
-				  + "Serial = '" + serial + "';";
+				  + "FROM `InstrumentSerial` "
+				  + "WHERE `Instrument` = \'" + instrument + "\' AND "
+				  + "`Serial Number` = '" + serial + "';";
 			
 			myRs = myStmt.executeQuery(query);
 			//4. Process the result set
@@ -761,8 +883,162 @@ public class SensorDatabaseAccess extends Database{
 		return instrSerialExists;
 	}
 
+	static private boolean checkIfADCPCurrentTableExistsQuery(String instrument){
+		boolean exists = false;
+		String tableName = "ADCPCurrentData_" + instrument;		
+		
+		exists = checkIfTableExists(tableName);
+				
+		return exists;
+	}
 	
+	static private boolean checkIfADCPCurrentDataExistsQuery(String instrument, String serial){
+		boolean ADCPCurExists = false;
+		
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+			//3, Execute SQL query
+			String tableName = "ADCPCurrentData_" + instrument;
+			
+			query = "SELECT COUNT(*) "
+				  + "FROM `" + tableName + "` "
+				  + "WHERE `Instrument` = \'" + instrument + "\' AND "
+				  + "`Serial Number` = '" + serial + "';";
+			
+			myRs = myStmt.executeQuery(query);
+			//4. Process the result set
+			while(myRs.next()){
+				int count = Integer.parseInt(myRs.getString("COUNT(*)"));
+				//Check if ADCP tuple exists for Instrument/Serial exists count > 0
+				if(count > 0){
+					ADCPCurExists = true;
+				}
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBQUERY_ERROR);
+		}
+		finally{
+			//Disconnect from Database
+			try{myRs.close();} catch(Exception exc){};
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
 
+		return ADCPCurExists;
+	}
+	
+	static private boolean checkIfADCPCurrentDataNewerQuery(String instrument, String serial, String timeStamp){
+		boolean curNewer = false;
+		
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+			//3, Execute SQL query
+			String tableName = "ADCPCurrentData_" + instrument;
+			
+			query = "SELECT COUNT(*) "
+				  + "FROM `" + tableName + "` "
+				  + "WHERE `Instrument` = \'" + instrument + "\' AND "
+				  + "`Serial Number` = '" + serial + "' AND "
+				  + "`ReadTime` >= \'" + timeStamp +"\'";
+						
+			myRs = myStmt.executeQuery(query);
+			//4. Process the result set
+			while(myRs.next()){
+				int count = Integer.parseInt(myRs.getString("COUNT(*)"));
+				//If count > 0 then read stored in DB is newer than read trying to be stored
+				if(count > 0){
+					curNewer = false;
+				}else{
+					curNewer = true;
+				}
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBQUERY_ERROR);
+		}
+		finally{
+			//Disconnect from Database
+			try{myRs.close();} catch(Exception exc){};
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+
+		return curNewer;
+	}
+	
+	static private boolean checkIfInstrumentSensorReadingTableExistsQuery(String instrument){
+		boolean exists = false;
+		String tableName = "SensorReadings_" + instrument;
+		
+		exists = checkIfTableExists(tableName);
+		
+		return exists;
+	}
+
+	static private boolean checkIfInstrumentSensorReadingExistsQuery(String instrument, String serial, String timeStamp){
+		boolean readingExists = false;
+		
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		String query;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+			//3, Execute SQL query
+			String tableName = "ADCPCurrentData_" + instrument;
+			
+			query = "SELECT COUNT(*) "
+				  + "FROM `" + tableName + "` "
+				  + "WHERE `Instrument` = \'" + instrument + "\' AND "
+				  + "`Serial Number` = '" + serial + "' AND `ReadTime` = \'" + timeStamp + "\'";
+			
+			myRs = myStmt.executeQuery(query);
+			//4. Process the result set
+			while(myRs.next()){
+				int count = Integer.parseInt(myRs.getString("COUNT(*)"));
+				//Check if ADCP tuple exists for Instrument/Serial exists count > 0
+				if(count > 0){
+					readingExists = true;
+				}
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBQUERY_ERROR);
+		}
+		finally{
+			//Disconnect from Database
+			try{myRs.close();} catch(Exception exc){};
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+
+		return readingExists;
+	}
+	
 }
 
 

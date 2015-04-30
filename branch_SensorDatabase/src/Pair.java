@@ -10,8 +10,8 @@ public class Pair<Key, Value>{
 	/* *************************************
 	 * 		Class Member Variables
 	 ***************************************/
-	private Key first;
-	private Value second;
+	public Key first;
+	public Value second;
 	
 	/* *************************************
 	 * 			Constructors
@@ -28,26 +28,9 @@ public class Pair<Key, Value>{
 		this.second = second;
 	}
 	
-	/* *************************************
-	 * 			Access Functions
-	 ***************************************/
-	public Key getFirst(){
-		return this.first;
+	public String toString(){
+		return first + " " + second;
 	}
-	
-	public Value getSecond(){
-		return this.second;
-	}
-	
-	/* *************************************
-	 * 			Modifiers
-	 ***************************************/
-	public void setFirst(Key first){
-		this.first = first;
-	}
-	
-	public void setSecond(Value second){
-		this.second = second;
-	}
+
 	
 }

@@ -15,7 +15,7 @@ public class DatabaseUnits {
 	static public final String BOOL_UNIT			= "BOOL";
 	static public final String CHARACTER_UNIT		= "CHARACTER";
 	static public final String DATETIME_UNIT 		= "DATETIME";
-	
+	static public final String STRING_UNIT			= VARCHAR45_UNIT;
 	
 	/*Measurement Units*/
 	static public final String CM_PER_S_UNIT 		= "DOUBLE"; 	// cm/s
