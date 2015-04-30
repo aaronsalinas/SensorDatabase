@@ -20,13 +20,50 @@ class Database implements DatabaseInformation{
 	/* *******************************************************
 	 * 				Create Functions
 	 *********************************************************/
-	/**IN PROGRESS
-	 * @return
-	 */
 	static protected boolean createTable(String query){
 		boolean success = false;
 		
-		if(createTableQuery(query)){
+		if(executeUpdateQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
+	static protected boolean updateTable(String query){
+		boolean success = false;
+		
+		if(executeUpdateQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
+	static protected boolean checkIfExists(String query){
+		boolean success = false;
+		
+		if(executeUpdateQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
+	static protected boolean insertIntoTable(String query){
+		boolean success = false;
+		
+		if(executeUpdateQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
+	static protected boolean updateValuesInTable(String query){
+		boolean success = false;
+		
+		if(executeUpdateQuery(query)){
 			success = true;
 		}
 		
@@ -79,7 +116,7 @@ class Database implements DatabaseInformation{
 	 * @param query
 	 * @return
 	 */
-	static private boolean createTableQuery(String query){
+	static private boolean executeUpdateQuery(String query){
 		boolean success = true; //assume success;
 		
 		//Connect to database
@@ -106,7 +143,7 @@ class Database implements DatabaseInformation{
 			success = false;
 		}
 		try{	
-			myRs = myStmt.executeUpdate(query); //Execute Query (add new instrument)
+			myRs = myStmt.executeUpdate(query); //Execute Query (Create New Table)
 		}
 		catch(SQLException exc){
 			exc.printStackTrace();
@@ -122,6 +159,49 @@ class Database implements DatabaseInformation{
 		return success;
 	}
 	
+	
+	static private boolean executeQueryQuery(String query){
+		boolean success = true; //assume success
+		
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs;
+		
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBCONN_ERROR);
+			success = false;
+		}
+		try{
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBSTATEMENT_ERROR);
+			success = false;
+		}
+		try{	
+			myRs = myStmt.executeQuery(query); //Execute Query (Create New Table)
+		}
+		catch(SQLException exc){
+			exc.printStackTrace();
+			System.out.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+		
+		return success;
+	}
 	
 	
 	

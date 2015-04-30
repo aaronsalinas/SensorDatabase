@@ -9,14 +9,26 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SensorDataProcessing {
+public class SensorDataProcessing{
 	private String filename;
 	private String instrument;
 	private String serial;
 	private String timeStamp;
-	private ArrayList<Pair<String, String> > ADCPCurrentData;
-	private ArrayList<Pair<String, String> > AttributeDataTypeList;
+	private ArrayList<Pair<String, String> > ADCPCurrentData = new ArrayList<Pair<String, String> >();
 	
+	/* Stores ADCP Attribute and Type (Attribute, Data Type) */
+	private ArrayList<Pair<String, String> > ADCPAttrDataTypeList = new ArrayList<Pair<String, String> >();
+	
+	/* Stores sensor Readings (Attribute, Value) in a list of list of pairs*/
+	private ArrayList<ArrayList<Pair<String, String> > > sensorReadValues = new ArrayList<ArrayList<Pair<String, String> > >();
+	private ArrayList<Pair<String, String> > sensorReadingRowAttrTypeList = new ArrayList<Pair<String, String> >();
+	//private ArrayList<String> rowAttributes = new ArrayList<String>();
+	//private ArrayList<String> rowAttributeUnits = new ArrayList<String>();
+	
+	/**
+	 * Default Constructor
+	 * @param file
+	 */
 	public SensorDataProcessing(String file){
 		filename = file;
 		instrument = "";
@@ -31,6 +43,11 @@ public class SensorDataProcessing {
 		}
 	}
 	
+	/**
+	 * This function test to see if a file exists/can be opened to be read
+	 * @param filename
+	 * @return
+	 */
 	public Boolean fileExists(String filename){
 		Boolean isFile = true;
 		File f = new File(filename);
@@ -41,13 +58,18 @@ public class SensorDataProcessing {
 		}
 	}
 	
+	/**
+	 * This function parses a file storing sensor readings and stores all of the information
+	 * as member variables for later reference for the user.
+	 * @param fileName
+	 * @throws IOException
+	 */
 	public void storeInformation(String fileName) throws IOException{
 		BufferedReader br = null;
 		String sCurrentLine;
+		
 		br = new BufferedReader(new FileReader(fileName));
 		
-		ArrayList<String> rowAttributes = new ArrayList<String>();
-		ArrayList<String> rowAttributeUnits = new ArrayList<String>();
 		while ((sCurrentLine = br.readLine()) != null) {
 			//Skip past irrelevant information
 			while((sCurrentLine = br.readLine()) != null){
@@ -57,7 +79,7 @@ public class SensorDataProcessing {
 			}
 			//Read attribute information
 			ADCPCurrentData = new ArrayList<>();
-			AttributeDataTypeList = new ArrayList<>();
+			ADCPAttrDataTypeList = new ArrayList<>();
 					
 			while((sCurrentLine = br.readLine()) != null){
 				//End of current data reached. Break loop, no more info to read
@@ -67,7 +89,7 @@ public class SensorDataProcessing {
 				else{
 					//Format: 'attribute : value'
 					sCurrentLine = sCurrentLine.substring(1).trim();
-					//System.out.println("sCurrentLine:" + sCurrentLine);
+
 					String tempPart1 = "";
 					String tempPart2 = ""; 
 					tempPart1 = tempPart1 + sCurrentLine;
@@ -75,11 +97,14 @@ public class SensorDataProcessing {
 					temp = tempPart1.split(":", 2);
 					tempPart1 = temp[0];
 					tempPart2 = temp[1];
-					//System.out.println("part1:" + tempPart1);
-					//System.out.println("part2:" + tempPart2);
-					Pair<String, String> a = new Pair(tempPart1.trim(), tempPart2.trim());
-					Pair<String, String> attrType = new Pair(tempPart1.trim(), DatabaseUnits.DOUBLE_UNIT);
+					
+					Pair<String, String> a = new Pair<String,String>(tempPart1.trim(), tempPart2.trim());
+					Pair<String, String> attrType = new Pair<String,String>(tempPart1.trim(), DatabaseUnits.DOUBLE_UNIT);
+					
+					/* Add ADCP Current Data for the instrument */
 					ADCPCurrentData.add(a);
+					
+					///Special Cases 
 					if(sCurrentLine.startsWith("Instrument") == true){
 						this.instrument = tempPart2.trim();
 					}
@@ -105,7 +130,7 @@ public class SensorDataProcessing {
 					}
 					
 					//PUSH PAIR INTO ATTRIBUTE/DATA TYPE LIST
-					AttributeDataTypeList.add(attrType);			
+					ADCPAttrDataTypeList.add(attrType);			
 				}
 			}
 			
@@ -114,6 +139,8 @@ public class SensorDataProcessing {
 					break;
 				}	
 			}
+			Boolean isTime = false;
+			Boolean addOnce = false;
 			//Read attribute information
 			while((sCurrentLine = br.readLine()) != null){
 				//End of attributes reached. Break loop, no more info to read
@@ -122,17 +149,20 @@ public class SensorDataProcessing {
 				}
 				else{
 					sCurrentLine = sCurrentLine.substring(1);
-					//System.out.println(sCurrentLine);				
+
 					String v = "";
 					StringTokenizer st = new StringTokenizer(sCurrentLine);
-					 String x = "";
-					 String[] parts = sCurrentLine.split(" ");
+					String x = "";
+					String[] parts = sCurrentLine.split(" ");
 					String lastWord = parts[parts.length - 2];
+					
+					String tempAttr = "";
+					String tempType = DatabaseUnits.DOUBLE_UNIT;
+					
 					 while (st.hasMoreTokens()) {
 						String n = st.nextToken();	 
 						if(isInteger(n)){
-						//	System.out.println(v);
-							 rowAttributes.add(v); 
+							 tempAttr = v.trim(); 
 							 v = "";
 						}
 						else{
@@ -148,131 +178,73 @@ public class SensorDataProcessing {
 					else{
 						x = parts[parts.length - 1];
 					}
-					rowAttributeUnits.add(x);
+					tempType = x.trim();
+					if(!x.equals("GMT") && isTime == true){
+						if(!tempAttr.equals("Month") &&
+								!tempAttr.equals("Hour") &&
+								!tempAttr.equals("Day") &&
+								!tempAttr.equals("Minute") &&
+								!tempAttr.equals("Second")
+								){
+							
+						sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
+						}
+					}else{
+						if(addOnce == false){
+							tempType = DatabaseUnits.DATETIME_UNIT;
+							addOnce = true;
+							sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
+							System.out.println(tempAttr + "," + tempType.trim());
+						}
+						isTime = true;
+					}
+					
+						//Add to list storing sensor reading Attribute
+						sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
+					
 				}
 			}
-			ArrayList<ArrayList<Pair<String, String> > > sensorReadValues = new ArrayList<>();
-			while ((sCurrentLine = br.readLine()) != null) {
+			
+			//Store the sensor readings from file
+			
+			while ((sCurrentLine = br.readLine()) != null) {				
 				if(sCurrentLine.startsWith("*") == false){
-					ArrayList<Pair<String, String> > elements = new ArrayList<>();
-					//System.out.print(i + ":\t" + sCurrentLine);
-					//System.in.read(); //Waits for user to press enter (TESTING)
-					StringTokenizer st = new StringTokenizer(sCurrentLine);
-					int x = 0;
-					Boolean good = false;
-					Boolean keepGoing = false;
-					String date = "";
-				    while (st.hasMoreTokens()) {
-				    	String n = st.nextToken();
-				    	if(rowAttributes.get(x).equals(" Year")){
-							date = date + n + "/";
+					String[] tempRead = sCurrentLine.split("\\s+");
+					
+					for(int i = 1; i < 5; i++){
+						if(tempRead[i].length() == 1){
+							tempRead[i] = "0" + tempRead[i];
 						}
-						else if(rowAttributes.get(x).equals(" Day")){
-							if(n.length() == 1){
-								date += "0" + n + " ";
-							}
-							else{
-								date += n + "/";
-							}
-						}
-						else if(rowAttributes.get(x).equals(" Month")){
-							if(n.length() == 1){
-								date += "0" + n + "/";
-							}
-							else{
-								date += n + " ";
-							}
-						}
-						else if(rowAttributes.get(x).equals(" Hour")){
-							if(n.length() == 1){
-								date +=  "0" + n + ":";
-							}else{
-								date += n + ":";
-							}
-						}
-						else if(rowAttributes.get(x).equals(" Minute")){
-							if(n.length() == 1){
-								date = date + "0" + n + ":";
-							}else{
-								date = date + n + ":";
-							}
-						}
-						else if(rowAttributes.get(x).equals(" Second")){
-							if(n.length() == 1){
-								date = date + "0" + n;
-							}
-							else{
-								date = date + n;
-							}
-						//	System.out.println("date: " + date);
-							good = true;
-						}
-				        if(good == true && rowAttributes.get(x).equals(" east vel")){
-				        	Pair pair = new Pair("ReadTime", date);
-							elements.add(pair);
-							date = "";
-							keepGoing = true;
-				        }
-				        if(keepGoing == true){
-				        	Pair pair = new Pair(rowAttributes.get(x), n);
-							elements.add(pair);
-							if(rowAttributes.get(x) == " ADCP depth"){
-								good = false;
-								keepGoing = false;
-							}
-				        }
-						x++;
-				    }
-				    sensorReadValues.add(elements);
-				 /*   for (int i = 0; i < elements.size(); i++){
-						System.out.println(i + ":"  + elements.get(i).getFirst() + "," + elements.get(i).getSecond());
-					}*/
-				    elements.clear();
+					}
+					
+					//Store time stamp for current read index [0 - 5] Year Month Day Hour Min Sec
+					String tempTimeStamp = "";
+					tempTimeStamp = tempTimeStamp + tempRead[0].trim() + "-"; //year
+					tempTimeStamp = tempTimeStamp + tempRead[1].trim() + "-"; //month
+					tempTimeStamp = tempTimeStamp + tempRead[2].trim() + " "; //day
+					
+					tempTimeStamp = tempTimeStamp + tempRead[3].trim() + ":"; //hour
+					tempTimeStamp = tempTimeStamp + tempRead[4].trim() + ":"; //minute
+					tempTimeStamp = tempTimeStamp + tempRead[5].trim(); //second
+					
+					//Store time stamp in list storing reading for current row
+					ArrayList<Pair<String, String> > tempRowList = new ArrayList<Pair<String,String> >();
+					tempRowList.add(new Pair<String,String>("ReadTime", tempTimeStamp));
+					
+					//Add the rest of the attributes in the file
+					for(int i = 7; i < tempRead.length; i++){
+						tempRowList.add(new Pair<String,String>(sensorReadingRowAttrTypeList.get(i).first, tempRead[i].trim() ));
+					}
+					
+					//Add row into the list holding all the reads for the file
+					sensorReadValues.add(tempRowList);
 				}
+				    
+				    
 			}
 			
-			ArrayList<Pair<String, String> > rowAttributesUnitsPair = new ArrayList<>();
-			for (int i = 0; i < rowAttributes.size(); i++){
-				Pair pair = new Pair(rowAttributes.get(i), rowAttributeUnits.get(i));
-				rowAttributesUnitsPair.add(pair);
-			}
 			
-		/*System.out.println("------------ADCPCurrentData-----------------");
-		for (int i = 0; i < ADCPCurrentData.size(); i++){
-			System.out.println(i + ":"  + ADCPCurrentData.get(i).getFirst() + "," + ADCPCurrentData.get(i).getSecond());
-		}
-		System.out.println("--------------------------------------------");
-		System.out.println("--------------rowAttributes------------------");
-		for (int i = 0; i < rowAttributes.size(); i++){
-			System.out.println(i + ":" + rowAttributes.get(i));
-		}
-		System.out.println("---------------------------------------------");
-		System.out.println("-----------rowAttributeUnits-----------------");
-		for (int i = 0; i < rowAttributeUnits.size(); i++){
-			System.out.println(i + ":" + rowAttributeUnits.get(i));
-		}
-		System.out.println("---------------------------------------------");	
-		
-		System.out.println("------------rowAttributesUnitsPair-----------------");
-		for (int i = 0; i < rowAttributesUnitsPair.size(); i++){
-			System.out.println(i + ":"  + rowAttributesUnitsPair.get(i).getFirst() + "," + rowAttributesUnitsPair.get(i).getSecond());
-		}
-		System.out.println("---------------------------------------------");
-		System.out.println("-----------sensorReadValues-----------------");
-		for (int i = 0; i < 1; i++){
-			for(int j = 0; j < sensorReadValues.get(i).size(); j++){
-				System.out.println(i + ":"  + sensorReadValues.get(i).get(j).getFirst() + "," 
-			+ sensorReadValues.get(i).get(j).getSecond());
-			}
-		}
-		System.out.println("---------------------------------------------");
-
-		System.out.println("------------AttributeDataTypesList-----------------");
-		for (int i = 0; i < AttributeDataTypesList.size(); i++){
-			System.out.println(i + ":"  + AttributeDataTypesList.get(i).getFirst() + "," + AttributeDataTypesList.get(i).getSecond());
-		}
-		System.out.println("---------------------------------------------");
-		*/
+			
 		}
 		
 		br.close();
@@ -316,9 +288,35 @@ public class SensorDataProcessing {
 	}
 	
 	
-	
+	public void testPrint(){
+		
+		System.out.println("Instrument: " + instrument);
+		System.out.println("Serial Number: " + serial);
+		System.out.println("Time Stamp: " + timeStamp + "\n");
+		
+		System.out.println("------------ADCPCurrentData-----------------");
+		for (int i = 0; i < ADCPCurrentData.size(); i++){
+			System.out.println(i + ": \'"  + ADCPCurrentData.get(i).first + "\', \'" + ADCPCurrentData.get(i).second + "\'");
+		}
+		
+		System.out.println("------------AttributeDataTypesList-----------------");
+		for (int i = 0; i < ADCPAttrDataTypeList.size(); i++){
+			System.out.println(i + ": \'"  + ADCPAttrDataTypeList.get(i).first + "\', \'" + ADCPAttrDataTypeList.get(i).second + "\'");
+		}
+
+		System.out.println("--------------sensorReadingRowAttrTypeList------------------");
+		for (int i = 0; i < sensorReadingRowAttrTypeList.size(); i++){
+			System.out.println(i + ": \'" + sensorReadingRowAttrTypeList.get(i).first + "\' \'" + sensorReadingRowAttrTypeList.get(i).second + "\'");
+		}
+		
+		System.out.println("------------sensorReadValues-----------------");
+		for (int i = 0; i < sensorReadValues.size(); i++){
+			System.out.println(sensorReadValues.get(i).toString());
+		}
+		System.out.println("---------------------------------------------");
+		
+	}
 	
 }
-
 
 
