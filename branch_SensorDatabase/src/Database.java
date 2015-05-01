@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +23,16 @@ class Database implements DatabaseInformation{
 	 * 				Create Functions
 	 *********************************************************/
 	static protected boolean createTable(String query){
+		boolean success = false;
+		
+		if(executeUpdateQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
+	static protected boolean dropTable(String query){
 		boolean success = false;
 		
 		if(executeUpdateQuery(query)){
@@ -142,6 +154,14 @@ class Database implements DatabaseInformation{
 		exists = checkIfExistsQuery(query);
 		
 		return exists;
+	}
+	
+	protected static boolean toListTuples(String query, ArrayList<String> list){
+		boolean success = false;
+		
+		success = toListQuery(query, list);
+		
+		return success;
 	}
 	
 	/* *******************************************************
@@ -297,7 +317,71 @@ class Database implements DatabaseInformation{
 		return tableExists;
 	}
 	
-	
+	/**
+	 * toListQuery
+	 * <p>
+	 * This function stores the results of a search query into a list of strings,
+	 * each string pertaining to one tuple in the result. Empty set if no data exists
+	 * for search.
+	 * @author Aaron D. Salinas
+	 * @param list
+	 * @param query
+	 * @return
+	 */
+	static private boolean toListQuery(String query, ArrayList<String> list){
+		boolean success = true; //Assume success		
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		ResultSetMetaData rsMd;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBCONN_ERROR);
+		}
+		try{
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+		}catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBSTATEMENT_ERROR);
+		}
+		try{
+			//3, Execute SQL query
+			myRs = myStmt.executeQuery(query);
+			
+			rsMd = myRs.getMetaData();
+			int numCol = rsMd.getColumnCount();
+			//4. Process the result set
+			while(myRs.next()){
+				String temp = "";
+				for (int i = 1; i <= numCol; i++) {
+			        String columnValue = myRs.getString(i);
+			        temp = temp + columnValue;
+			    }
+				
+				//Add tuple to list
+				temp.trim(); //trim trailing whitespace
+				list.add(temp);
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myRs.close();} catch(Exception exc){};
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+		
+		return success;
+	}
 	
 }
 

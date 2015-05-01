@@ -19,6 +19,8 @@ public class SensorDataProcessing{
 	/* Stores ADCP Attribute and Type (Attribute, Data Type) */
 	private ArrayList<Pair<String, String> > ADCPAttrDataTypeList = new ArrayList<Pair<String, String> >();
 	
+	private ArrayList<Pair<String, String> > realTypesList = new ArrayList<Pair<String, String> >();
+	
 	/* Stores sensor Readings (Attribute, Value) in a list of list of pairs*/
 	private ArrayList<ArrayList<Pair<String, String> > > sensorReadValues = new ArrayList<ArrayList<Pair<String, String> > >();
 	private ArrayList<Pair<String, String> > sensorReadingRowAttrTypeList = new ArrayList<Pair<String, String> >();
@@ -88,7 +90,7 @@ public class SensorDataProcessing{
 				else{
 					//Format: 'attribute : value'
 					sCurrentLine = sCurrentLine.substring(1).trim();
-
+										
 					String tempPart1 = "";
 					String tempPart2 = ""; 
 					tempPart1 = tempPart1 + sCurrentLine;
@@ -97,8 +99,17 @@ public class SensorDataProcessing{
 					tempPart1 = temp[0];
 					tempPart2 = temp[1];
 					
+					if(tempPart1.trim().matches("Time Stamp")){
+						tempPart1 = "ReadTime";
+					}
+					
 					Pair<String, String> a = new Pair<String,String>(tempPart1.trim(), tempPart2.trim());
 					Pair<String, String> attrType = new Pair<String,String>(tempPart1.trim(), DatabaseUnits.DOUBLE_UNIT);
+					
+					//Store ReadTime as DATETIME unit for database
+					if(tempPart1 == "ReadTime"){
+						attrType.second = DatabaseUnits.DATETIME_UNIT;
+					}
 					
 					/* Add ADCP Current Data for the instrument */
 					ADCPCurrentData.add(a);
@@ -140,6 +151,7 @@ public class SensorDataProcessing{
 			}
 			Boolean isTime = false;
 			Boolean addOnce = false;
+			String dateTimeUnit = DatabaseUnits.DATETIME_UNIT;
 			//Read attribute information
 			while((sCurrentLine = br.readLine()) != null){
 				//End of attributes reached. Break loop, no more info to read
@@ -157,8 +169,9 @@ public class SensorDataProcessing{
 					
 					String tempAttr = "";
 					String tempType = DatabaseUnits.DOUBLE_UNIT;
-					
-					 while (st.hasMoreTokens()) {
+				
+					//Store the Attribute
+					while (st.hasMoreTokens()) {
 						String n = st.nextToken();	 
 						if(isInteger(n)){
 							 tempAttr = v.trim(); 
@@ -168,7 +181,10 @@ public class SensorDataProcessing{
 							 v += " ";
 							 v += n;
 						}
-					 }
+					}
+					
+					
+					//Store the Data Type
 					if(!lastWord.equals(" ")){
 						x = lastWord;
 						x += " ";
@@ -178,34 +194,25 @@ public class SensorDataProcessing{
 						x = parts[parts.length - 1];
 					}
 					tempType = x.trim();
-					if(!x.equals("GMT") && isTime == true){
-						if(!tempAttr.equals("Month") &&
-								!tempAttr.equals("Hour") &&
-								!tempAttr.equals("Day") &&
-								!tempAttr.equals("Minute") &&
-								!tempAttr.equals("Second")
-								){
-							
-						sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
-						}
-					}else{
+					
+					
+					
+					//Store Attribute/DataType for rows of the readings
+					if(x.equals("GMT") && isTime == false){
 						if(addOnce == false){
 							tempType = DatabaseUnits.DATETIME_UNIT;
 							addOnce = true;
-							sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
-							System.out.println(tempAttr + "," + tempType.trim());
 						}
 						isTime = true;
 					}
 					
-						//Add to list storing sensor reading Attribute
-						sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
+					//Add to list storing sensor reading Attribute
+					sensorReadingRowAttrTypeList.add(new Pair<String,String>(tempAttr, tempType.trim()));
 					
 				}
 			}
 			
-			//Store the sensor readings from file
-			
+			/* Store the sensor readings from file */
 			while ((sCurrentLine = br.readLine()) != null) {				
 				if(sCurrentLine.startsWith("*") == false){
 					String[] tempRead = sCurrentLine.split("\\s+");
@@ -231,20 +238,27 @@ public class SensorDataProcessing{
 					tempRowList.add(new Pair<String,String>("ReadTime", tempTimeStamp));
 					
 					//Add the rest of the attributes in the file
-					for(int i = 7; i < tempRead.length; i++){
+					for(int i = 6; i < tempRead.length; i++){
 						tempRowList.add(new Pair<String,String>(sensorReadingRowAttrTypeList.get(i).first, tempRead[i].trim() ));
 					}
 					
 					//Add row into the list holding all the reads for the file
 					sensorReadValues.add(tempRowList);
-				}
-				    
-				    
-			}
-			
-			
-			
+				}   
+			}	
 		}
+		
+		//Update Sensor Readings Attribute/DataType to account for conversion from GMT fields to a Datetime Unit
+		//Store the types of data types
+		ArrayList<Pair<String, String >> tempPairList = new ArrayList<Pair<String, String> >();
+		
+		tempPairList.add(new Pair<String, String>("ReadTime", DatabaseUnits.DATETIME_UNIT));
+		for(int i = 6; i < sensorReadingRowAttrTypeList.size(); i++){
+			tempPairList.add(new Pair<String, String>(sensorReadingRowAttrTypeList.get(i).first, DatabaseUnits.DOUBLE_UNIT));
+			realTypesList.add(sensorReadingRowAttrTypeList.get(i));
+		}
+		
+		sensorReadingRowAttrTypeList = tempPairList;
 		
 		br.close();
 	}
@@ -264,7 +278,27 @@ public class SensorDataProcessing{
 	public String getFileName(){
 		return filename;
 	}
-
+	
+	public ArrayList<Pair<String, String> > toListADCPCurrentData(){
+		return ADCPCurrentData;
+	}
+	
+	public ArrayList<Pair<String, String> > toListADCPAttrDataTypeList(){
+		return ADCPAttrDataTypeList;
+	}
+	
+	public ArrayList<ArrayList<Pair<String, String> > > toListSensorReadValues(){
+		return sensorReadValues;
+	}
+	
+	public ArrayList<Pair<String, String> > toListSensorReadingRowAttrTypeList(){
+		return sensorReadingRowAttrTypeList;
+	}
+	
+	public ArrayList<Pair<String, String> > toListRealTypesList(){
+		return realTypesList;
+	}
+	
 	/**
 	/**
 	 * isInteger

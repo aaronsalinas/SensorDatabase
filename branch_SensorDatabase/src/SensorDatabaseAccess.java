@@ -1,3 +1,4 @@
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -17,7 +18,7 @@ public class SensorDatabaseAccess extends Database{
 	static public boolean createInstrumentSensorReadingTable(String instrument, String serial, ArrayList<Pair<String, String> > attrDataTypeList){
 		boolean success = false;
 		
-		if(!checkIfInstrumentSensorReadingTableExists(instrument) && checkIfInstrumentSerialExists(instrument, serial)){
+		if(!checkIfSensorReadingTableExists(instrument) && checkIfInstrumentSerialExists(instrument, serial)){
 			
 			success = createInstrumentSensorReadingTableQuery(instrument, serial, attrDataTypeList);
 			
@@ -34,7 +35,7 @@ public class SensorDatabaseAccess extends Database{
 		if(!checkIfADCPCurrentTableExists(instrument)){
 			success = createADCPCurrentTableQuery(instrument, ADCPAttrDataType);
 			if(!success){
-				System.out.println("ERROR: ADCP Current Data Table For" + instrument + "Not Added To Database!");
+				System.out.println("ERROR: ADCP Current Data Table For " + instrument + " Not Added To Database!");
 			}
 		}
 		
@@ -77,7 +78,7 @@ public class SensorDatabaseAccess extends Database{
 	 * This function takes in a instrument and serial and adds the model
 	 * into the database. If the instrument does not exists in the database then
 	 * the function returns false w/out attempting to add the serial number into
-	 * the database.
+	 * the database
 	 * @param instrument
 	 * @param serial
 	 */
@@ -120,11 +121,13 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
-	static public boolean addInstrumentSensorReadings(String instrument, String serial, ArrayList<ArrayList<Pair<String, String> > > sensorReadings){
+	static public boolean addInstrumentSensorReadings(String instrument, String serial, 
+			ArrayList<ArrayList<Pair<String, String> > > sensorReadings, ArrayList<ArrayList<Pair<String,String> > > addedReadings){
 		boolean success = false;
 		
-		if(checkIfInstrumentSensorReadingTableExists(instrument)){
-			addInstrumentSensorReadingsQuery(instrument, serial, sensorReadings);
+		if(checkIfSensorReadingTableExists(instrument)){
+			
+			success = addInstrumentSensorReadingsQuery(instrument, serial, sensorReadings, addedReadings);
 		}
 		else{
 			System.out.println("ERROR: Table For Instrument \"" + instrument + "\" Readings Not In Database!");
@@ -165,7 +168,6 @@ public class SensorDatabaseAccess extends Database{
 		
 		return success;
 	}
-	
 	
 	/* ************************************************************************ 
 	 * 								Remove Functions
@@ -211,6 +213,28 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	static public boolean dropADCPCurrentTable(String instrument){
+		String query = "DROP TABLE `ADCPCurrentData_" + instrument + "`";
+		boolean success = false;
+		
+		//Check if instrument exists
+		if(checkIfADCPCurrentTableExists(instrument)){
+			dropTable(query);
+		}
+		
+		return success;
+	}
+	
+	static public boolean dropSensorReadingTable(String instrument){
+		String query = "DROP TABLE `SensorReading_" + instrument + "`";
+		boolean success = false;
+		
+		if(checkIfSensorReadingTableExists(instrument)){
+			dropTable(query);
+		}
+		
+		return success;
+	}
 	
 	/* ************************************************************************ 
 	 * 								Access Functions
@@ -224,10 +248,10 @@ public class SensorDatabaseAccess extends Database{
 	 * @author Aaron D. Salinas
 	 */
 	static public List<String> toListAllInstruments(){
-		List<String> instrList = new ArrayList<String>();
+		ArrayList<String> instrList = new ArrayList<String>();
 		String query = "SELECT * FROM Instrument;";
 		
-		if(toListQuery(instrList, query) == false){
+		if(toListTuples(query, instrList) == false){
 			System.err.println("Error in retriving information.");
 		}
 		
@@ -244,16 +268,32 @@ public class SensorDatabaseAccess extends Database{
 	 * @return
 	 */
 	static public List<String> toListAllInstrumentSerials(){
-		List<String> instrSerialList = new ArrayList<String>();
+		ArrayList<String> instrSerialList = new ArrayList<String>();
 		String query = "SELECT * FROM InstrumentSerial";
 		
-		if(toListQuery(instrSerialList, query) == false){
+		if(toListTuples(query, instrSerialList) == false){
 			System.err.println("Error in retrieving information");
 		}
 		
 		
 		return instrSerialList;
 	}
+	
+	static public ArrayList<String> toListADCPCurrentData(String instrument, String serial){
+		
+		ArrayList<String> ADCPCurTuple = new ArrayList<String>();
+		
+		String query = "SELECT * FROM `ADCPCurrentData_" + instrument + "` WHERE ";
+		query = query + "`Instrument` = \'" + instrument +"\' AND `Serial Number` = \'" + serial + "\'";
+		
+		
+		if(toListTuples(query, ADCPCurTuple) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return ADCPCurTuple;
+	}
+	
 	
 	/**
 	 * checkIfInstrumentExists
@@ -315,10 +355,10 @@ public class SensorDatabaseAccess extends Database{
 		return newer;
 	}
 	
-	static public boolean checkIfInstrumentSensorReadingTableExists(String instrument){
+	static public boolean checkIfSensorReadingTableExists(String instrument){
 		boolean exists = false;
 		
-		exists = checkIfInstrumentSensorReadingTableExistsQuery(instrument);
+		exists = checkIfSensorReadingTableExistsQuery(instrument);
 		
 		return exists;
 	}
@@ -330,6 +370,8 @@ public class SensorDatabaseAccess extends Database{
 		
 		return exists;
 	}
+	
+	
 	
 	/* ************************************************************************ 
 	 * 								Query Functions
@@ -402,7 +444,7 @@ public class SensorDatabaseAccess extends Database{
 		}
 		query = query + attributes + ") VALUES(" + values;
 		query = query + ")";
-	
+				
 		success = insertIntoTable(query);
 		
 		
@@ -410,18 +452,35 @@ public class SensorDatabaseAccess extends Database{
 	}
 
 	static private boolean addInstrumentSensorReadingsQuery(String instrument, String serial, 
-												ArrayList<ArrayList<Pair<String, String> > > sensorReadings){
+		ArrayList<ArrayList<Pair<String, String> > > sensorReadings, ArrayList<ArrayList<Pair<String,String> > > addedReadings){
 		boolean success = false;
-				
+		String tableName = "SensorReading_" + instrument;
+		String query = "";
+		System.out.println(sensorReadings.size());
+		
 		for(int i = 0; i < sensorReadings.size(); i++){
-			for(int j = 0; j < sensorReadings.get(i).size(); i++){
-				//Add each row of read one at a time
+			ArrayList<Pair<String, String> > rowRead = sensorReadings.get(i);
+			
+			query = "INSERT INTO `" + tableName + "` (\'" + instrument + "\'"
+					+ ", \'" + serial + "\'";
+			
+			//Add Attributes
+			for(int j = 0; j < rowRead.size(); i++){
+				if(j > 0) query = query + ",";
+				query = query + rowRead.get(j).first + "'";
 			}
+			
+			
+			query = query + ")";
+			
+			System.out.println(query);
 		}
 				
 		
-		return success;
+		return false;
 	}
+
+	
 	
 	private static boolean createADCPCurrentTableQuery(String instrument,
 			ArrayList<Pair<String, String>> ADCPAttrDataType) {
@@ -453,7 +512,9 @@ public class SensorDatabaseAccess extends Database{
 	private static boolean createInstrumentSensorReadingTableQuery(String instrument, String serial, List<Pair<String, String> > attrDataTypeList){
 		boolean success = false;
 		
-		String query = "CREATE TABLE IF NOT EXISTS `SensorReading_" + instrument + "`(";
+		String query = "CREATE TABLE IF NOT EXISTS `SensorReading_" + instrument 
+						+ "`(`Instrument` " + DatabaseUnits.STRING_UNIT + " NOT NULL,`Serial Number`" 
+						+ DatabaseUnits.STRING_UNIT + " NOT NULL,";
 		//Add attributes/data types
 		for(int i = 0; i < attrDataTypeList.size(); i++){
 			query = query + "`" + attrDataTypeList.get(i).first + "` ";
@@ -532,7 +593,7 @@ public class SensorDatabaseAccess extends Database{
 		
 		return success;
 	}
-		
+	
 	/**
 	 * removeInstrumentQuery
 	 * <p>
@@ -632,73 +693,6 @@ public class SensorDatabaseAccess extends Database{
 		}
 		finally{
 			//Disconnect from Database
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
-		
-		return success;
-	}
-	
-	/**
-	 * toListQuery
-	 * <p>
-	 * This function stores the results of a search query into a list of strings,
-	 * each string pertaining to one tuple in the result. Empty set if no data exists
-	 * for search.
-	 * @author Aaron D. Salinas
-	 * @param list
-	 * @param query
-	 * @return
-	 */
-	static private boolean toListQuery(List<String> list, String query){
-		boolean success = true; //Assume success		
-		//Connect to database
-		Connection myConn = null;
-		Statement myStmt = null;
-		ResultSet myRs = null;
-		ResultSetMetaData rsMd;
-		try{
-			//1. Get a connection to the database
-			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
-		}catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBCONN_ERROR);
-		}
-		try{
-			//2. Create a statement
-			myStmt = myConn.createStatement();
-		}catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBSTATEMENT_ERROR);
-		}
-		try{
-			//3, Execute SQL query
-			myRs = myStmt.executeQuery(query);
-			
-			rsMd = myRs.getMetaData();
-			int numCol = rsMd.getColumnCount();
-			//4. Process the result set
-			while(myRs.next()){
-				String temp = "";
-				for (int i = 1; i <= numCol; i++) {
-			        String columnValue = myRs.getString(i);
-			        //System.out.print(columnValue);
-			        temp = temp + "'" + columnValue + "'" + " ";
-			    }
-				
-				//Add tuple to list
-				temp.trim(); //trim trailing whitespace
-				list.add(temp);
-			}
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBQUERY_ERROR);
-			success = false;
-		}
-		finally{
-			//Disconnect from Database
-			try{myRs.close();} catch(Exception exc){};
 			try{myStmt.close();} catch(Exception exc){}
 			try{myConn.close();} catch(Exception exc){}
 		}
@@ -813,8 +807,7 @@ public class SensorDatabaseAccess extends Database{
 
 	static private boolean checkIfADCPCurrentTableExistsQuery(String instrument){
 		boolean exists = false;
-		String tableName = "ADCPCurrentData_" + instrument;		
-		
+		String tableName = "ADCPCurrentData_" + instrument;			
 		
 		exists = checkIfTableExists(tableName);
 				
@@ -914,9 +907,9 @@ public class SensorDatabaseAccess extends Database{
 		return curNewer;
 	}
 	
-	static private boolean checkIfInstrumentSensorReadingTableExistsQuery(String instrument){
+	static private boolean checkIfSensorReadingTableExistsQuery(String instrument){
 		boolean exists = false;
-		String tableName = "SensorReadings_" + instrument;
+		String tableName = "SensorReading_" + instrument;
 		
 		exists = checkIfTableExists(tableName);
 		
@@ -938,6 +931,7 @@ public class SensorDatabaseAccess extends Database{
 		return readingExists;
 	}
 	
+
 }
 
 
