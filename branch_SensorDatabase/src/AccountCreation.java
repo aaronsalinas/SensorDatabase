@@ -1,3 +1,14 @@
+/******************************************************************************
+ * Filename: AccountCreation.java
+ * Author: Dylan Clohessy (Dylan_Clohessy@baylor.edu)
+ * Description: A class that allows users to create a new account. If the user
+ *              fills out all JTextFields in a valid manner, attempts to create
+ *              the account. If it already exists within the database, doesn't
+ *              create account. If not, creates it and returns user to Login
+ *              screen.  
+ * Created: 4/28/2015
+ * Modified:4/30/2015
+******************************************************************************/
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
