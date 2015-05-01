@@ -47,8 +47,8 @@ public class SensorDataProcessing{
 	 * @param filename
 	 * @return
 	 */
-	public Boolean fileExists(String filename){
-		Boolean isFile = true;
+	public boolean fileExists(String filename){
+		boolean isFile = true;
 		File f = new File(filename);
 		if(f.exists() && !f.isDirectory()) { 
 			return true;
