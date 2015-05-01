@@ -55,6 +55,9 @@ public class Login extends JFrame{
 		//Set the title of the window
 		myFrame.setTitle("Database Login");
 		
+		username = new String();
+		password = new String();
+		
 		//Instantiate the new panel
 		panel = new JPanel(null);
 		//Set the size of the panel
@@ -120,9 +123,9 @@ public class Login extends JFrame{
 				//If the button is selected, attempt to login with the info
 				//provided
 				if(e.getActionCommand().equals("User Login")){
-					if(validateLoginInfo()){
-						JOptionPane.showMessageDialog(null, "Logged in as " +
-															userText.getText());
+					getLoginInformation();
+					if(validateLoginInfo() && AdminDatabaseAccess.validateUser(username, password)){
+						JOptionPane.showMessageDialog(null, "Logged in as " + username);
 					}
 				}
 			}
@@ -194,17 +197,16 @@ public class Login extends JFrame{
 	 * Pre: None
 	 * Post: Returns true if both fields are populated, false otherwise
 	 *************************************************************************/
-	@SuppressWarnings("deprecation")
 	private boolean validateLoginInfo(){
 		boolean goodData = true;
 		//Check if userText has content
-		if(userText.getText().isEmpty()){
+		if(username.isEmpty()){
 			//If not, tell the user and return false
 			JOptionPane.showMessageDialog(null, "Enter a Username");
 			goodData = false;
 		}
 		//Check if passwordText has content
-		else if(passwordText.getText().isEmpty()){
+		else if(password.isEmpty()){
 			//If not, tell the user and return false
 			JOptionPane.showMessageDialog(null, "Enter a Password");
 			goodData = false;
@@ -223,6 +225,20 @@ public class Login extends JFrame{
 	public void addAUser(){
 		this.hideScreen();
 		createAccount.showScreen();
+	}
+
+	/**************************************************************************
+	 * Description: Loads the username and password into their respective
+	 *              strings.
+	 * Return Type: void
+	 * Pre: None
+	 * Post: Sets "username" to the String contained in userText and "password"
+	 *       to the string set in passwordText.
+	 *************************************************************************/
+	@SuppressWarnings("deprecation")
+	private void getLoginInformation(){
+		username = userText.getText();
+		password = passwordText.getText();
 	}
 	
 	/**************************************************************************
@@ -246,6 +262,8 @@ public class Login extends JFrame{
 	}
 	
 	//Private data members for "Login" class
+	private String username;
+	private String password;
 	
 	//JFrame and JPanel on which we display information
 	private JFrame myFrame;
