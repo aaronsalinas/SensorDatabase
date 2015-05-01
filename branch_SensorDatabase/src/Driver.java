@@ -7,16 +7,6 @@
 ******************************************************************************/
 public class Driver{
 	public static void main(String[] args){
-		new Driver();
+		new Login();
 	}
-	
-	public Driver(){
-		init();
-	}
-	
-	private void init(){
-		loginScreen = new Login();
-	}
-	
-	private Login loginScreen;
 }

@@ -121,11 +121,13 @@ public class Login extends JFrame{
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, attempt to login with the info
-				//provided
+				//provided. If successful, launch the searchEngine
 				if(e.getActionCommand().equals("User Login")){
 					getLoginInformation();
 					if(validateLoginInfo() && AdminDatabaseAccess.validateUser(username, password)){
 						JOptionPane.showMessageDialog(null, "Logged in as " + username);
+						hideScreen();
+						searchEngine = new DatabaseSearchEngine();
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "Login Failed");
@@ -157,7 +159,9 @@ public class Login extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, login as a guest
 				if(e.getActionCommand().equals("Guest Login")){
-					JOptionPane.showMessageDialog(null, "Login as guest");
+					JOptionPane.showMessageDialog(null, "Logged in as Guest");
+					hideScreen();
+					searchEngine = new DatabaseSearchEngine();
 				}
 			}
 		});
@@ -290,4 +294,6 @@ public class Login extends JFrame{
 	//An "AccountCreation" object to launch if someone wants to register a 
 	//new user
 	private AccountCreation createAccount;
+	
+	private DatabaseSearchEngine searchEngine;
 }
