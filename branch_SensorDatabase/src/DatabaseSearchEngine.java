@@ -103,13 +103,13 @@ public class DatabaseSearchEngine extends JFrame{
 		//Initialize the searchLabel, define position, size and add it to
 		//the panel
 		searchLabel = new JLabel("Select Instrument:");
-		searchLabel.setBounds(120, 15, 125, 25);
+		searchLabel.setBounds(130, 15, 125, 25);
 		panel.add(searchLabel);
 		
 		//Initialize the instrumentLabel, define position, size, and add it to
 		//the panel
 		instrumentLabel = new JLabel();
-		instrumentLabel.setBounds(400, 15, 125, 25);
+		instrumentLabel.setBounds(370, 15, 155, 25);
 		
 		//add the search and reset buttons
 		addSearchButton();
@@ -141,6 +141,7 @@ public class DatabaseSearchEngine extends JFrame{
 		instrumentList = new ArrayList<String>();
 		
 		//BULLSHIT
+		instrumentList.add("*INSTRUMENT LIST*");
 		instrumentList.add("Instrument 1");
 		instrumentList.add("Instrument 2");
 		instrumentList.add("Instrument 3");
@@ -149,7 +150,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Initialize the "instrumentDropDown" JComboBox  
 		instrumentDropDown = new JComboBox<String>();
 		//Set the location and size
-		instrumentDropDown.setBounds(110, 40, 150, 30);
+		instrumentDropDown.setBounds(110, 40, 160, 30);
 		
 		//Populate the JComboBox with all members of the "instrumentList"
 		for(String item : instrumentList){
@@ -164,10 +165,16 @@ public class DatabaseSearchEngine extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//Set "selectedInstrument" to the item selected by the user
 				selectedInstrument = (String) instrumentDropDown.getSelectedItem();
-				//Add the reset button to the panel
-				panel.add(resetButton);
-				//Initialize the "serialDropDown" JComboBox
-				initSerialDropDown();
+				if(!selectedInstrument.equals("*INSTRUMENT LIST*")){
+					//Add the reset button to the panel
+					panel.add(resetButton);
+					//Add the search by instrument button to the panel
+					panel.add(searchByInstrumentButton);
+					//Initialize the "serialDropDown" JComboBox
+					initSerialDropDown();
+				} else {
+					JOptionPane.showMessageDialog(null, "Select an Instrument");
+				}
 			}
 		});
 		
@@ -183,13 +190,14 @@ public class DatabaseSearchEngine extends JFrame{
 	private void initSerialDropDown(){
 		//Set the "instrumentLabel" to the instrument that was selected from
 		//the previous drop-down menu and add the JLabel to the JPanel
-		instrumentLabel.setText(selectedInstrument);
+		instrumentLabel.setText(selectedInstrument + "'s Serial #'s");
 		panel.add(instrumentLabel);
 		
 		//Clear the "serialList"
 		serialList.clear();
 		
 		//BULLSHIT
+		serialList.add("ALL");
 		serialList.add("AE0159");
 		serialList.add("00C647");
 		serialList.add("314EAA");
@@ -204,7 +212,7 @@ public class DatabaseSearchEngine extends JFrame{
 		for(String item : serialList){
 			serialDropDown.addItem(item);
 		}
-		
+		selectedSerial = "*";
 		//Add the "serialDropDown" to the JPanel
 		panel.add(serialDropDown);
 		
@@ -217,6 +225,9 @@ public class DatabaseSearchEngine extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//sets "selectedSerial" to the item selected by the user
 				selectedSerial = (String) serialDropDown.getSelectedItem();
+				if(selectedSerial.equals("ALL")){
+					selectedSerial = "*";
+				}
 			}
 		});
 		
@@ -240,12 +251,12 @@ public class DatabaseSearchEngine extends JFrame{
 		beginDateSecondDropDown = new JComboBox<String>();
 		
 		//Set the location and size of each
-		beginDateYearDropDown.setBounds(30, 400, 120, 30);
-		beginDateMonthDropDown.setBounds(150, 400, 90, 30);
-		beginDateDayDropDown.setBounds(240, 400, 90, 30);
-		beginDateHourDropDown.setBounds(330, 400, 90, 30);
-		beginDateMinuteDropDown.setBounds(420, 400, 90, 30);
-		beginDateSecondDropDown.setBounds(510, 400, 90, 30);
+		beginDateYearDropDown.setBounds(20, 350, 120, 30);
+		beginDateMonthDropDown.setBounds(140, 350, 90, 30);
+		beginDateDayDropDown.setBounds(230, 350, 90, 30);
+		beginDateHourDropDown.setBounds(320, 350, 90, 30);
+		beginDateMinuteDropDown.setBounds(410, 350, 90, 30);
+		beginDateSecondDropDown.setBounds(500, 350, 90, 30);
 		
 		//Populate the JComboBoxes with all members of the their respective 
 		//String arrays
@@ -266,15 +277,15 @@ public class DatabaseSearchEngine extends JFrame{
 		
 		//Set up the JLabels for beginDate and add them to the panel
 		beginDateLabel = new JLabel("Select Beginning Date:");
-		beginDateLabel.setBounds(250, 350, 200, 30);
+		beginDateLabel.setBounds(250, 300, 200, 30);
 		panel.add(beginDateLabel);
 		
-		beginYMDLabel = new JLabel("YYYY    :    MM    :    DD");
-		beginYMDLabel.setBounds(110, 370, 150, 30);
+		beginYMDLabel = new JLabel("Y Y Y Y           :          M M          :            D D");
+		beginYMDLabel.setBounds(60, 320, 225, 30);
 		panel.add(beginYMDLabel);
 		
-		beginHMSLabel = new JLabel("HH     :     MM     :     SS");
-		beginHMSLabel.setBounds(360, 370, 150, 30);
+		beginHMSLabel = new JLabel("H H           :             M M         :          S S");
+		beginHMSLabel.setBounds(345, 320, 200, 30);
 		panel.add(beginHMSLabel);
 		
 		
@@ -307,12 +318,12 @@ public class DatabaseSearchEngine extends JFrame{
 		endDateSecondDropDown = new JComboBox<String>();
 				
 		//Set the location and size
-		endDateYearDropDown.setBounds(30, 500, 120, 30);
-		endDateMonthDropDown.setBounds(150, 500, 90, 30);
-		endDateDayDropDown.setBounds(240, 500, 90, 30);
-		endDateHourDropDown.setBounds(330, 500, 90, 30);
-		endDateMinuteDropDown.setBounds(420, 500, 90, 30);
-		endDateSecondDropDown.setBounds(510, 500, 90, 30);
+		endDateYearDropDown.setBounds(20, 450, 120, 30);
+		endDateMonthDropDown.setBounds(140, 450, 90, 30);
+		endDateDayDropDown.setBounds(230, 450, 90, 30);
+		endDateHourDropDown.setBounds(320, 450, 90, 30);
+		endDateMinuteDropDown.setBounds(410, 450, 90, 30);
+		endDateSecondDropDown.setBounds(500, 450, 90, 30);
 				
 		//Populate the JComboBoxes with all members of the their respective 
 		//String arrays
@@ -333,15 +344,15 @@ public class DatabaseSearchEngine extends JFrame{
 				
 		//Set up the JLabels for endDate and add them to the panel
 		endDateLabel = new JLabel("Select End Date:");
-		endDateLabel.setBounds(270, 450, 200, 30);
+		endDateLabel.setBounds(270, 400, 200, 30);
 		panel.add(endDateLabel);
 				
-		endYMDLabel = new JLabel("YYYY    :    MM    :    DD");
-		endYMDLabel.setBounds(110, 470, 150, 30);
+		endYMDLabel = new JLabel("Y Y Y Y           :          M M          :            D D");
+		endYMDLabel.setBounds(60, 420, 250, 30);
 		panel.add(endYMDLabel);
 				
-		endHMSLabel = new JLabel("HH     :     MM     :     SS");
-		endHMSLabel.setBounds(360, 470, 150, 30);
+		endHMSLabel = new JLabel("H H           :             M M         :          S S");
+		endHMSLabel.setBounds(345, 420, 200, 30);
 		panel.add(endHMSLabel);
 				
 				
@@ -366,15 +377,15 @@ public class DatabaseSearchEngine extends JFrame{
 	private void addSearchButton(){
 		//Instantiate a the private data member "Search", and set the 
 		//position and size
-		searchByInstrumentButton = new JButton("Search Instrument");
-		searchByInstrumentButton.setBounds(110, 80, 150, 25);
+		searchByInstrumentButton = new JButton("Search by Serial #");
+		searchByInstrumentButton.setBounds(110, 80, 160, 25);
 				
 		//Add an ActionListener to the "Search" button
 		searchByInstrumentButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, search for the serial number of
 				//the selected instrument
-				if(e.getActionCommand().equals("Search Instrument")){
+				if(e.getActionCommand().equals("Search by Serial #")){
 					if(isValidQuery()){
 						outputDisplay.setText("Displaying all data gathered by the " + 
 											   selectedInstrument + " sensor with serial number:"
@@ -384,7 +395,6 @@ public class DatabaseSearchEngine extends JFrame{
 			}
 		});
 		//Add the JButton to the panel
-		panel.add(searchByInstrumentButton);
 	}
 	
 	/**************************************************************************
@@ -411,6 +421,7 @@ public class DatabaseSearchEngine extends JFrame{
 					panel.remove(resetButton);
 					panel.remove(instrumentLabel);
 					panel.remove(serialDropDown);
+					panel.remove(searchByInstrumentButton);
 					panel.revalidate();
 					panel.repaint();
 				}
@@ -431,7 +442,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "addAdmin", and set the 
 		//position and size
 		adminButton = new JButton("Admin Menu");
-		adminButton.setBounds(250, 700, 150, 25);
+		adminButton.setBounds(250, 610, 150, 25);
 				
 		//Add an ActionListener to the "addAdmin" button
 		adminButton.addActionListener(new ActionListener() {
@@ -459,8 +470,8 @@ public class DatabaseSearchEngine extends JFrame{
 	private void addSearchByDateButton(){
 		//Instantiate a the private data member "searchByDateButton", and sets 
 		//the position and size
-		searchByDateButton = new JButton("Search Dates");
-		searchByDateButton.setBounds(250, 550, 150, 25);
+		searchByDateButton = new JButton("Search ALL by Dates");
+		searchByDateButton.setBounds(220, 540, 200, 25);
 				
 		//Add an ActionListener to the searchByDateButton button
 		searchByDateButton.addActionListener(new ActionListener() {
@@ -496,8 +507,8 @@ public class DatabaseSearchEngine extends JFrame{
 	private void addSearchByBothButton(){
 		//Instantiate a the private data member "searchByDateButton", and sets 
 		//the position and size
-		searchByBothButton = new JButton("Search by Both");
-		searchByBothButton.setBounds(250, 625, 150, 25);
+		searchByBothButton = new JButton("Search instrument by Dates");
+		searchByBothButton.setBounds(220, 575, 200, 25);
 				
 		//Add an ActionListener to the searchByDateButton button
 		searchByBothButton.addActionListener(new ActionListener() {

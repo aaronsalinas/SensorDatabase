@@ -127,7 +127,7 @@ public class Login extends JFrame{
 					if(validateLoginInfo() && AdminDatabaseAccess.validateUser(username, password)){
 						JOptionPane.showMessageDialog(null, "Logged in as " + username);
 						hideScreen();
-						new AdminDatabaseBrowser();
+						new AdminDatabaseBrowser(username);
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "Login Failed");
