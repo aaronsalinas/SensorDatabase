@@ -76,7 +76,7 @@ public class DatabaseSearchEngine extends JFrame{
 		panel = new JPanel();
 		panel.setLayout(null);
 		//Set the size of the panel
-		panel.setSize(1200, 1000);
+		panel.setSize(1200, 800);
 		
 		//Add the scroll pane used to output the information
 		addScrollPane();
@@ -103,13 +103,13 @@ public class DatabaseSearchEngine extends JFrame{
 		//Initialize the searchLabel, define position, size and add it to
 		//the panel
 		searchLabel = new JLabel("Select Instrument:");
-		searchLabel.setBounds(50, 15, 125, 25);
+		searchLabel.setBounds(120, 15, 125, 25);
 		panel.add(searchLabel);
 		
 		//Initialize the instrumentLabel, define position, size, and add it to
 		//the panel
 		instrumentLabel = new JLabel();
-		instrumentLabel.setBounds(240, 15, 125, 25);
+		instrumentLabel.setBounds(400, 15, 125, 25);
 		
 		//add the search and reset buttons
 		addSearchButton();
@@ -125,7 +125,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Set the frame to focusable, visible, and set the size
 		myFrame.setFocusable(true);
 		myFrame.setVisible(false);
-		myFrame.setSize(1200, 1000);
+		myFrame.setSize(1200, 800);
 	}
 	
 	/**************************************************************************
@@ -149,7 +149,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Initialize the "instrumentDropDown" JComboBox  
 		instrumentDropDown = new JComboBox<String>();
 		//Set the location and size
-		instrumentDropDown.setBounds(30, 40, 150, 30);
+		instrumentDropDown.setBounds(110, 40, 150, 30);
 		
 		//Populate the JComboBox with all members of the "instrumentList"
 		for(String item : instrumentList){
@@ -198,7 +198,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Initialize the "serialDropDown" JComboBox and set the position and
 		//dimensions
 		serialDropDown = new JComboBox<String>();
-		serialDropDown.setBounds(220, 40, 120, 30);
+		serialDropDown.setBounds(380, 40, 120, 30);
 		
 		//Iterate through the "serialList", adding all items inside
 		for(String item : serialList){
@@ -240,12 +240,12 @@ public class DatabaseSearchEngine extends JFrame{
 		beginDateSecondDropDown = new JComboBox<String>();
 		
 		//Set the location and size of each
-		beginDateYearDropDown.setBounds(30, 500, 60, 30);
-		beginDateMonthDropDown.setBounds(90, 500, 40, 30);
-		beginDateDayDropDown.setBounds(130, 500, 40, 30);
-		beginDateHourDropDown.setBounds(190, 500, 40, 30);
-		beginDateMinuteDropDown.setBounds(230, 500, 40, 30);
-		beginDateSecondDropDown.setBounds(270, 500, 40, 30);
+		beginDateYearDropDown.setBounds(30, 400, 120, 30);
+		beginDateMonthDropDown.setBounds(150, 400, 90, 30);
+		beginDateDayDropDown.setBounds(240, 400, 90, 30);
+		beginDateHourDropDown.setBounds(330, 400, 90, 30);
+		beginDateMinuteDropDown.setBounds(420, 400, 90, 30);
+		beginDateSecondDropDown.setBounds(510, 400, 90, 30);
 		
 		//Populate the JComboBoxes with all members of the their respective 
 		//String arrays
@@ -266,15 +266,15 @@ public class DatabaseSearchEngine extends JFrame{
 		
 		//Set up the JLabels for beginDate and add them to the panel
 		beginDateLabel = new JLabel("Select Beginning Date:");
-		beginDateLabel.setBounds(110, 450, 200, 30);
+		beginDateLabel.setBounds(250, 350, 200, 30);
 		panel.add(beginDateLabel);
 		
-		beginYMDLabel = new JLabel("YYYY  :  MM  :  DD");
-		beginYMDLabel.setBounds(50, 470, 150, 30);
+		beginYMDLabel = new JLabel("YYYY    :    MM    :    DD");
+		beginYMDLabel.setBounds(110, 370, 150, 30);
 		panel.add(beginYMDLabel);
 		
-		beginHMSLabel = new JLabel("HH   :   MM   :   SS");
-		beginHMSLabel.setBounds(195, 470, 150, 30);
+		beginHMSLabel = new JLabel("HH     :     MM     :     SS");
+		beginHMSLabel.setBounds(360, 370, 150, 30);
 		panel.add(beginHMSLabel);
 		
 		
@@ -307,12 +307,12 @@ public class DatabaseSearchEngine extends JFrame{
 		endDateSecondDropDown = new JComboBox<String>();
 				
 		//Set the location and size
-		endDateYearDropDown.setBounds(30, 600, 60, 30);
-		endDateMonthDropDown.setBounds(90, 600, 40, 30);
-		endDateDayDropDown.setBounds(130, 600, 40, 30);
-		endDateHourDropDown.setBounds(190, 600, 40, 30);
-		endDateMinuteDropDown.setBounds(230, 600, 40, 30);
-		endDateSecondDropDown.setBounds(270, 600, 40, 30);
+		endDateYearDropDown.setBounds(30, 500, 120, 30);
+		endDateMonthDropDown.setBounds(150, 500, 90, 30);
+		endDateDayDropDown.setBounds(240, 500, 90, 30);
+		endDateHourDropDown.setBounds(330, 500, 90, 30);
+		endDateMinuteDropDown.setBounds(420, 500, 90, 30);
+		endDateSecondDropDown.setBounds(510, 500, 90, 30);
 				
 		//Populate the JComboBoxes with all members of the their respective 
 		//String arrays
@@ -333,15 +333,15 @@ public class DatabaseSearchEngine extends JFrame{
 				
 		//Set up the JLabels for endDate and add them to the panel
 		endDateLabel = new JLabel("Select End Date:");
-		endDateLabel.setBounds(130, 550, 200, 30);
+		endDateLabel.setBounds(270, 450, 200, 30);
 		panel.add(endDateLabel);
 				
-		endYMDLabel = new JLabel("YYYY  :  MM  :  DD");
-		endYMDLabel.setBounds(50, 570, 150, 30);
+		endYMDLabel = new JLabel("YYYY    :    MM    :    DD");
+		endYMDLabel.setBounds(110, 470, 150, 30);
 		panel.add(endYMDLabel);
 				
-		endHMSLabel = new JLabel("HH   :   MM   :   SS");
-		endHMSLabel.setBounds(195, 570, 150, 30);
+		endHMSLabel = new JLabel("HH     :     MM     :     SS");
+		endHMSLabel.setBounds(360, 470, 150, 30);
 		panel.add(endHMSLabel);
 				
 				
@@ -367,7 +367,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "Search", and set the 
 		//position and size
 		searchByInstrumentButton = new JButton("Search Instrument");
-		searchByInstrumentButton.setBounds(30, 80, 150, 25);
+		searchByInstrumentButton.setBounds(110, 80, 150, 25);
 				
 		//Add an ActionListener to the "Search" button
 		searchByInstrumentButton.addActionListener(new ActionListener() {
@@ -399,7 +399,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "Reset", and set the 
 		//position and size
 		resetButton = new JButton("Reset");
-		resetButton.setBounds(220, 80, 120, 25);
+		resetButton.setBounds(380, 80, 120, 25);
 				
 		//Add an ActionListener to the "Reset" button
 		resetButton.addActionListener(new ActionListener() {
@@ -431,7 +431,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "addAdmin", and set the 
 		//position and size
 		adminButton = new JButton("Admin Menu");
-		adminButton.setBounds(100, 900, 150, 25);
+		adminButton.setBounds(250, 700, 150, 25);
 				
 		//Add an ActionListener to the "addAdmin" button
 		adminButton.addActionListener(new ActionListener() {
@@ -460,7 +460,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "searchByDateButton", and sets 
 		//the position and size
 		searchByDateButton = new JButton("Search Dates");
-		searchByDateButton.setBounds(100, 650, 150, 25);
+		searchByDateButton.setBounds(250, 550, 150, 25);
 				
 		//Add an ActionListener to the searchByDateButton button
 		searchByDateButton.addActionListener(new ActionListener() {
@@ -497,7 +497,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "searchByDateButton", and sets 
 		//the position and size
 		searchByBothButton = new JButton("Search by Both");
-		searchByBothButton.setBounds(100, 750, 150, 25);
+		searchByBothButton.setBounds(250, 625, 150, 25);
 				
 		//Add an ActionListener to the searchByDateButton button
 		searchByBothButton.addActionListener(new ActionListener() {
@@ -546,14 +546,14 @@ public class DatabaseSearchEngine extends JFrame{
 		//it so it cannot be edited by the user.
 		outputDisplay = new JTextArea();
 		outputDisplay.setEditable(false);
-		outputDisplay.setBounds(600, 25, 580, 900);
+		outputDisplay.setBounds(600, 25, 580, 700);
 		
 		//Instantiate our JScrollPane, setting the vertical and horizontal 
 		//scroll bars to appear as needed, as well as setting the bounds
 		scrollingDisplay = new JScrollPane(outputDisplay);
 		scrollingDisplay.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollingDisplay.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollingDisplay.setBounds(400, 25, 700, 900);
+		scrollingDisplay.setBounds(600, 25, 580, 700);
 		//Add the JScrollPane to the panel
 		panel.add(scrollingDisplay);
 	}
