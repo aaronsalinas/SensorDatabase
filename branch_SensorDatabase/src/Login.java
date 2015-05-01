@@ -127,7 +127,7 @@ public class Login extends JFrame{
 					if(validateLoginInfo() && AdminDatabaseAccess.validateUser(username, password)){
 						JOptionPane.showMessageDialog(null, "Logged in as " + username);
 						hideScreen();
-						searchEngine = new DatabaseSearchEngine();
+						
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "Login Failed");
@@ -161,7 +161,7 @@ public class Login extends JFrame{
 				if(e.getActionCommand().equals("Guest Login")){
 					JOptionPane.showMessageDialog(null, "Logged in as Guest");
 					hideScreen();
-					searchEngine = new DatabaseSearchEngine();
+					new DatabaseSearchEngine();
 				}
 			}
 		});
@@ -295,5 +295,4 @@ public class Login extends JFrame{
 	//new user
 	private AccountCreation createAccount;
 	
-	private DatabaseSearchEngine searchEngine;
 }

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Filename: Login.java
+ * Filename: DataBaseSearchEngine.java
  * Author: Dylan Clohessy (Dylan_Clohessy@baylor.edu)
  * Description: A class that allows users to search the database if logged into
  *              the system. Provides a graphical framework for this task.
@@ -200,8 +200,8 @@ public class DatabaseSearchEngine extends JFrame{
 				}
 			}
 		});
-				//Add the JButton to the panel
-				panel.add(searchButton);
+		//Add the JButton to the panel
+		panel.add(searchButton);
 	}
 	
 	/**************************************************************************
@@ -256,6 +256,26 @@ public class DatabaseSearchEngine extends JFrame{
 		}
 		
 		return validQuery;
+	}
+	
+	/**************************************************************************
+	 * Description: Hides this window
+	 * Return Type: void
+	 * Pre: None
+	 * Post: Hides this window
+	 *************************************************************************/
+	public void hideScreen(){
+		myFrame.setVisible(false);
+	}
+	
+	/**************************************************************************
+	 * Description: Displays this window
+	 * Return Type: void
+	 * Pre: None
+	 * Post: Displays this window
+	 *************************************************************************/
+	public void showScreen(){
+		myFrame.setVisible(true);
 	}
 	
 	//Private data members of the DatabaseSearchEngine class
