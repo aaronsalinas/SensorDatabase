@@ -181,6 +181,7 @@ public class AdminDatabaseBrowser extends JFrame{
 	    //If the returnVal is of the approved format, store the absolute path.
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	inputFileName = fileChooser.getSelectedFile().getAbsolutePath();
+	    	new StoreSensorData(inputFileName);
 	    }
 	}
 	

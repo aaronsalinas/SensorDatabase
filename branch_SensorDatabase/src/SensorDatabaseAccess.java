@@ -157,12 +157,10 @@ public class SensorDatabaseAccess extends Database{
 																+ serial + "Not Added to Database");
 		}
 		else{
-			if(checkIfADCPCurrentDataNewer(instrument, serial, timeStamp)){
-				success = updateADCPCurrentDataQuery(instrument, serial, attrValList);
-				if(!success) System.out.println("ERROR: ADCP Current Data For " + instrument + " "
-												+ serial + "Not Updated!");
-			}
-			
+
+			success = updateADCPCurrentDataQuery(instrument, serial, attrValList);
+			if(!success) System.out.println("ERROR: ADCP Current Data For " + instrument + " "
+											+ serial + "Not Updated!");	
 		}
 		
 		
@@ -271,13 +269,18 @@ public class SensorDatabaseAccess extends Database{
 	 * to retrieve information from the database
 	 * @author Aaron D. Salinas
 	 */
-	static public List<String> toListAllInstruments(){
-		ArrayList<String> instrList = new ArrayList<String>();
+	static public ArrayList<String> toListAllInstruments(){
+		ArrayList<ArrayList<String> > tempList = new ArrayList<ArrayList<String> > ();
 		String query = "SELECT * FROM Instrument;";
 		
-		if(toListTuples(query, instrList) == false){
+		if(toListTuples(query, tempList) == false){
 			System.err.println("Error in retriving information.");
 		}
+		//Concatenate the results into one list
+		ArrayList<String> instrList = new ArrayList<String>();
+		for(int i = 0; i < tempList.size(); i++){
+			instrList.add(tempList.get(i).get(0));
+		}	
 		
 		return instrList;
 	}
@@ -291,21 +294,37 @@ public class SensorDatabaseAccess extends Database{
 	 * @author Aaron D. Salinas
 	 * @return
 	 */
-	static public List<String> toListAllInstrumentSerials(){
-		ArrayList<String> instrSerialList = new ArrayList<String>();
+	static public ArrayList<ArrayList<String>> toListAllInstrumentSerials(){
+		ArrayList<ArrayList<String> > tempList = new ArrayList<ArrayList<String> >();
 		String query = "SELECT * FROM InstrumentSerial";
 		
-		if(toListTuples(query, instrSerialList) == false){
+		if(toListTuples(query, tempList) == false){
 			System.err.println("Error in retrieving information");
 		}
-		
-		
-		return instrSerialList;
+
+		return tempList;
 	}
 	
-	static public ArrayList<String> toListADCPCurrentData(String instrument, String serial){
+	static public ArrayList<String> toListSerialsByInstrument(String instrument){
+		ArrayList<String> serials = new ArrayList<String>();
+		ArrayList<ArrayList<String>> tempList = new ArrayList<ArrayList<String> >();
+		String query = "SELECT `Serial Number` FROM `InstrumentSerial` "
+				+ "WHERE `Instrument`=\'" + instrument + "\'";
 		
-		ArrayList<String> ADCPCurTuple = new ArrayList<String>();
+		if(toListTuples(query, tempList) == false){
+			System.err.println("Error in retrieving information");
+		}else{
+			for(int i = 0; i < tempList.size(); i++){
+				serials.add(tempList.get(i).get(0));
+			}
+		}
+		
+		return serials;
+	}
+	
+	static public ArrayList<ArrayList<String> > toListADCPCurrentDataInstrSerial(String instrument, String serial){
+		
+		ArrayList<ArrayList<String> >ADCPCurTuple = new ArrayList<ArrayList<String> >();
 		
 		String query = "SELECT * FROM `ADCPCurrentData_" + instrument + "` WHERE ";
 		query = query + "`Instrument` = \'" + instrument +"\' AND `Serial Number` = \'" + serial + "\'";
@@ -315,6 +334,75 @@ public class SensorDatabaseAccess extends Database{
 		}
 		
 		return ADCPCurTuple;
+	}
+	
+	static public ArrayList<ArrayList<String> > toListADCPCurrentDataInstr(String instrument){
+		ArrayList<ArrayList<String> >ADCPCurTuple = new ArrayList<ArrayList<String> >();
+		
+		String query = "SELECT * FROM `ADCPCurrentData_" + instrument + "` WHERE ";
+		query = query + "`Instrument` = \'" + instrument + "\'";
+		
+		if(toListTuples(query, ADCPCurTuple) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return ADCPCurTuple;
+	}
+
+	
+	static public ArrayList<ArrayList<String> > toListSensorReadingByInstrument(String instrument){
+		ArrayList<ArrayList<String> > readings = new ArrayList<ArrayList<String> >();
+		String query = "SELECT * FROM `SensorReading_" + instrument + "`"
+						+ " WHERE `Instrument`=\'" + instrument + "\'";
+		
+		if(toListTuples(query, readings) == false){
+			System.err.println("Error in retrieving information");
+		}
+		return readings;
+	}
+	
+	static public ArrayList<ArrayList<String> > toListSensorReadingByInstrumentSerial(String instrument, String serial){
+		ArrayList<ArrayList<String> > readings = new ArrayList<ArrayList<String> >();
+		
+		String query = "SELECT * FROM `SensorReading_" + instrument + "`"
+				+ " WHERE `Instrument`=\'" + instrument + "\' AND" 
+				+ " `Serial Number`=\'" + serial + "\'";
+
+		if(toListTuples(query, readings) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return readings;
+	}
+	
+	static public ArrayList<ArrayList<String> > toListSensorReadingByInstrumentSerialTime(String instrument, String serial, 
+													String startTime, String endTime){
+		ArrayList<ArrayList<String> > readings = new ArrayList<ArrayList<String> >();
+		
+		String query = "SELECT * FROM `SensorReading_" + instrument + "`"
+				+ " WHERE `Instrument`=\'" + instrument + "\' AND" 
+				+ " `Serial Number`=\'" + serial + "\' AND `ReadTime` >= \'" + startTime + "\'"
+				+ " AND `ReadTime`<= \'" + endTime + "\'";
+
+		if(toListTuples(query, readings) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return readings;
+	}
+	
+	static public ArrayList<String> toListADCPTableAttributes(String instrument){
+		ArrayList<String> colNames = new ArrayList<String>();
+		String tableName = "ADCPCurrentData_" + instrument;	
+		
+		return toListTableAttributes(tableName, colNames);
+	}
+	
+	static public ArrayList<String> toListSensorReadingAttributes(String instrument){
+		ArrayList<String> colNames = new ArrayList<String>();
+		String tableName = "SensorReading_" + instrument;	
+		
+		return toListTableAttributes(tableName, colNames);
 	}
 	
 	/**
@@ -558,7 +646,7 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
-	static private boolean updateADCPCurrentDataQuery(String instrument, String serial, ArrayList<Pair<String, String> > attrVal){
+	static private boolean updateADCPCurrentDataQuery(String instrument, String serial, ArrayList<Pair<String, String> > attrVal){		
 		boolean success = true; //assume success;
 		//Connect to database
 		Connection myConn = null;
@@ -599,7 +687,6 @@ public class SensorDatabaseAccess extends Database{
 			}
 			
 			query = query + " WHERE `Instrument`=\'" + instrument + "\' AND `Serial Number`=\'" + serial + "\'";
-								
 			myRs = myStmt.executeUpdate(query); //Execute Query (add new ADCP current reading for instrument)			
 		}
 		catch(SQLException exc){

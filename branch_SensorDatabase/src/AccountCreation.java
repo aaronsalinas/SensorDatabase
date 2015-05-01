@@ -169,7 +169,6 @@ public class AccountCreation extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				if(e.getActionCommand().equals("Create Account")){
 					if(checkAttributes()){
-						printInformation();
 						if(addNewAccount()){
 							JOptionPane.showMessageDialog(null, "Account Created");
 							returnToLogin();	

@@ -20,16 +20,18 @@ public class StoreSensorData {
 		fileName = file; //Check that file can be opened
 		DBAccess = Database.checkIfDatabaseConnect(); //Check that Database can be connected to
 		
-		if(fileValid(fileName)){
+		if(!fileValid(fileName)){
+			System.out.println("ERROR: File Not Opened");
+		}
+		else{
 			data = new SensorDataProcessing(file); //Store parsed information from file
 			stored = storeInfoInDB(); //Store information into database
-		}
-		
-		//Test Print
-		if(stored){
-			System.out.println("Successful Store");
-		}else{
-			System.out.println("ERROR: Unsuccessful Store!");
+			//Test Print
+			if(stored){
+				System.out.println("Successful Store");
+			}else{
+				System.out.println("ERROR: Unsuccessful Store!");
+			}
 		}
 	}
 	
@@ -98,13 +100,15 @@ public class StoreSensorData {
 				success = false;
 			}
 		}//Update tuple if current ADCP is newer than one stored in DB
-		else if(success && !SensorDatabaseAccess.checkIfADCPCurrentDataNewer(instrument, serial, timeStamp)){
+		else if(success && SensorDatabaseAccess.checkIfADCPCurrentDataNewer(instrument, serial, timeStamp)){
 			
 			//Store Copy of current existing tuple for ADCPCurrentData for instrument
-			ArrayList<String> tempStr = SensorDatabaseAccess.toListADCPCurrentData(instrument, serial); //Get values for current stored CurrentData
+			ArrayList<ArrayList<String> > tempStr = SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(instrument, serial); //Get values for current stored CurrentData			
 			
-			for(int i = 0; i < tempStr.size(); i++){
-				Pair<String, String> tempPair = new Pair<String, String>(ADCPCurrentData.get(i).first,tempStr.get(i));
+			ADCPCurDataRevert.add(new Pair<String,String>("ReadTime", tempStr.get(0).get(0)));
+						
+			for(int i = 1; i < tempStr.get(0).size(); i++){
+				Pair<String, String> tempPair = new Pair<String, String>(ADCPCurrentData.get(i).first, tempStr.get(0).get(i));
 				ADCPCurDataRevert.add(tempPair);
 			}
 			
@@ -141,7 +145,6 @@ public class StoreSensorData {
 			}
 			
 		}
-		
 		/* If failure in any steps, undo all changes in reverse order*/
 		if(!success){
 			
@@ -183,15 +186,13 @@ public class StoreSensorData {
 	 * @return
 	 */
 	public boolean fileValid(String file){
-		boolean valid = false;
-		
+		boolean valid = false;	
 		File f = new File(file);
 		if(f.exists() && !f.isDirectory()) { 
 			valid = true;
 		}else{
 			valid = false;
-		}
-		
+		}	
 		return valid;
 	}
 	

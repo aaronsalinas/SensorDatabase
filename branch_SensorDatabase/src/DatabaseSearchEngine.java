@@ -88,14 +88,14 @@ public class DatabaseSearchEngine extends JFrame{
 		//Add the searchByBothButton
 		addSearchByBothButton();
 		
+		allInstruments = new ArrayList<String>();
+		allSerialNumbers = new ArrayList<String>();
+		
 		//Initialize the strings
 		selectedInstrument = new String();
 		selectedSerial = new String();
 		beginDateString = new String();
 		endDateString = new String();
-		
-		//Initialize the serialList
-		serialList = new ArrayList<String>();
 		
 		//Add the instrument drop-down menu
 		initInstrumentDropDown();
@@ -136,25 +136,20 @@ public class DatabaseSearchEngine extends JFrame{
 	 *       instruments for the user to select from.
 	 *************************************************************************/
 	private void initInstrumentDropDown(){
-		//Initialize the instrumentList data member to store the names of all
-		//of the instruments from the database
-		instrumentList = new ArrayList<String>();
 		
-		//BULLSHIT
-		instrumentList.add("*INSTRUMENT LIST*");
-		instrumentList.add("Instrument 1");
-		instrumentList.add("Instrument 2");
-		instrumentList.add("Instrument 3");
-		instrumentList.add("Instrument 4");
-		
+		//Add initial value to instrument dropdownbox
+		allInstruments.add("*INSTRUMENT LIST*");
+		for(int i = 0; i < SensorDatabaseAccess.toListAllInstruments().size(); i++){
+			allInstruments.add(SensorDatabaseAccess.toListAllInstruments().get(i));
+		}
 		//Initialize the "instrumentDropDown" JComboBox  
 		instrumentDropDown = new JComboBox<String>();
 		//Set the location and size
 		instrumentDropDown.setBounds(110, 40, 160, 30);
 		
 		//Populate the JComboBox with all members of the "instrumentList"
-		for(String item : instrumentList){
-			instrumentDropDown.addItem(item);
+		for(int i = 0; i < allInstruments.size(); i++){
+			instrumentDropDown.addItem(allInstruments.get(i));
 		}
 		
 		//Add the "instrumentDropDown" to the panel
@@ -193,25 +188,29 @@ public class DatabaseSearchEngine extends JFrame{
 		instrumentLabel.setText(selectedInstrument + "'s Serial #'s");
 		panel.add(instrumentLabel);
 		
-		//Clear the "serialList"
-		serialList.clear();
 		
-		//BULLSHIT
-		serialList.add("ALL");
-		serialList.add("AE0159");
-		serialList.add("00C647");
-		serialList.add("314EAA");
-		serialList.add("41A89E");
+		allSerialNumbers.clear();
+		allSerialNumbers.add("ALL");
+		
+		for(String item : SensorDatabaseAccess.toListSerialsByInstrument(selectedInstrument)){
+			allSerialNumbers.add(item);
+			System.out.println(item);
+		}
+		
+		
 		
 		//Initialize the "serialDropDown" JComboBox and set the position and
 		//dimensions
 		serialDropDown = new JComboBox<String>();
 		serialDropDown.setBounds(380, 40, 120, 30);
 		
-		//Iterate through the "serialList", adding all items inside
-		for(String item : serialList){
+		for(String item : allSerialNumbers){
 			serialDropDown.addItem(item);
 		}
+		//Iterate through the "serialList", adding all items inside
+		//for(ArrayList<String> touple :){
+		//	serialDropDown.addItem(item);
+		//}
 		selectedSerial = "*";
 		//Add the "serialDropDown" to the JPanel
 		panel.add(serialDropDown);
@@ -280,11 +279,11 @@ public class DatabaseSearchEngine extends JFrame{
 		beginDateLabel.setBounds(250, 300, 200, 30);
 		panel.add(beginDateLabel);
 		
-		beginYMDLabel = new JLabel("Y Y Y Y           :          M M          :            D D");
+		beginYMDLabel = new JLabel("Y Y Y Y        :       M M       :         D D");
 		beginYMDLabel.setBounds(60, 320, 225, 30);
 		panel.add(beginYMDLabel);
 		
-		beginHMSLabel = new JLabel("H H           :             M M         :          S S");
+		beginHMSLabel = new JLabel("H H        :          M M      :        S S");
 		beginHMSLabel.setBounds(345, 320, 200, 30);
 		panel.add(beginHMSLabel);
 		
@@ -347,11 +346,11 @@ public class DatabaseSearchEngine extends JFrame{
 		endDateLabel.setBounds(270, 400, 200, 30);
 		panel.add(endDateLabel);
 				
-		endYMDLabel = new JLabel("Y Y Y Y           :          M M          :            D D");
+		endYMDLabel = new JLabel("Y Y Y Y        :       M M       :         D D");
 		endYMDLabel.setBounds(60, 420, 250, 30);
 		panel.add(endYMDLabel);
 				
-		endHMSLabel = new JLabel("H H           :             M M         :          S S");
+		endHMSLabel = new JLabel("H H        :          M M      :       S S");
 		endHMSLabel.setBounds(345, 420, 200, 30);
 		panel.add(endHMSLabel);
 				
@@ -380,6 +379,9 @@ public class DatabaseSearchEngine extends JFrame{
 		searchByInstrumentButton = new JButton("Search by Serial #");
 		searchByInstrumentButton.setBounds(110, 80, 160, 25);
 				
+		
+		/* * * * * * * * * ** * * * DYLAN IS HERE! */
+		
 		//Add an ActionListener to the "Search" button
 		searchByInstrumentButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
@@ -390,6 +392,17 @@ public class DatabaseSearchEngine extends JFrame{
 						outputDisplay.setText("Displaying all data gathered by the " + 
 											   selectedInstrument + " sensor with serial number:"
 											   + selectedSerial + "\n");
+						for(String item : SensorDatabaseAccess.toListADCPTableAttributes(selectedInstrument)){
+							outputDisplay.append(item + " | ");
+						}
+
+						outputDisplay.append("\n");
+						for(ArrayList<String> touples : SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(selectedInstrument, selectedSerial)){
+							for(String item : touples){
+								outputDisplay.append(item + " | ");
+							}
+							outputDisplay.append("\n");
+						}
 					}
 				}
 			}
@@ -415,9 +428,10 @@ public class DatabaseSearchEngine extends JFrame{
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, remove indicated elements from the
-				//JPanel then revalidate and repaint it.
+				//JPanel then re-validate and repaint it.
 				if(e.getActionCommand().equals("Reset")){
-					selectedInstrument = selectedSerial = "";
+					selectedInstrument = "";
+					selectedSerial = "";
 					panel.remove(resetButton);
 					panel.remove(instrumentLabel);
 					panel.remove(serialDropDown);
@@ -478,7 +492,7 @@ public class DatabaseSearchEngine extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, record the date values indicated by the
 				//user
-				if(e.getActionCommand().equals("Search Dates")){
+				if(e.getActionCommand().equals("Search ALL by Dates")){
 					beginDateString = (String) beginDateYearDropDown.getSelectedItem() + "-";
 					beginDateString += (String) beginDateMonthDropDown.getSelectedItem() + "-";
 					beginDateString += (String) beginDateDayDropDown.getSelectedItem() + " ";
@@ -515,7 +529,7 @@ public class DatabaseSearchEngine extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, record the date values indicated by the
 				//user
-				if(e.getActionCommand().equals("Search by Both")){
+				if(e.getActionCommand().equals("Search instrument by Dates")){
 					if(isValidQuery()){
 						beginDateString = (String) beginDateYearDropDown.getSelectedItem() + "-";
 						beginDateString += (String) beginDateMonthDropDown.getSelectedItem() + "-";
@@ -558,6 +572,7 @@ public class DatabaseSearchEngine extends JFrame{
 		outputDisplay = new JTextArea();
 		outputDisplay.setEditable(false);
 		outputDisplay.setBounds(600, 25, 580, 700);
+		outputDisplay.setColumns(30);
 		
 		//Instantiate our JScrollPane, setting the vertical and horizontal 
 		//scroll bars to appear as needed, as well as setting the bounds
@@ -620,6 +635,8 @@ public class DatabaseSearchEngine extends JFrame{
 	private String beginDateString;
 	private String endDateString;
 		
+	private ArrayList<String> allInstruments;
+	private ArrayList<String> allSerialNumbers;
 	//JComboBoxes to limit the user to valid searches
 	private JComboBox<String> instrumentDropDown;
 	private JComboBox<String> serialDropDown;
@@ -639,11 +656,6 @@ public class DatabaseSearchEngine extends JFrame{
 	//JFrame and JPanel on which we can display the information
 	private JFrame myFrame;
 	private JPanel panel;
-	
-	//ArrayLists of Strings to hold the list of instruments and serial numbers
-	//for the JComboBoxes
-	private ArrayList<String> instrumentList;
-	private ArrayList<String> serialList;
 	
 	//String arrays to hold the constant values of Years, Months, Days, Hours,
 	//Minutes, and Seconds.

@@ -110,6 +110,32 @@ class Database implements DatabaseInformation{
 		}
 	}
 	
+	public static ArrayList<String> toListTableAttributes(String tableName, ArrayList<String> colNames){
+		boolean success = false;
+		colNames = new ArrayList<String>();
+		ArrayList<ArrayList<String> > tempList = new ArrayList<ArrayList<String> >();
+		
+		String query = "SELECT COLUMN_NAME "
+					+ "FROM INFORMATION_SCHEMA.COLUMNS"
+					+ " WHERE `TABLE_NAME`=\'" + tableName + "\'";
+		
+		if(toListQuery(query, tempList)){
+			success = true;
+			for(int i = 0; i < tempList.size(); i++){
+				
+				colNames.add(tempList.get(i).get(0));
+			}
+			return colNames;
+		}else{
+			System.out.println(DBQUERY_ERROR);
+		}
+		
+		
+		
+		return new ArrayList<String>();
+	}
+	
+	
 	/**
 	 * This function returns a boolean indicating if the database has successfully connected
 	 * @return boolean
@@ -166,7 +192,7 @@ class Database implements DatabaseInformation{
 		return exists;
 	}
 	
-	protected static boolean toListTuples(String query, ArrayList<String> list){
+	protected static boolean toListTuples(String query, ArrayList<ArrayList<String> > list){
 		boolean success = false;
 		
 		success = toListQuery(query, list);
@@ -338,8 +364,9 @@ class Database implements DatabaseInformation{
 	 * @param query
 	 * @return
 	 */
-	static private boolean toListQuery(String query, ArrayList<String> list){
-		boolean success = true; //Assume success		
+	static private boolean toListQuery(String query, ArrayList<ArrayList<String>> list){
+		boolean success = true; //Assume success	
+		ArrayList<String> resultTuple = new ArrayList<String>();
 		//Connect to database
 		Connection myConn = null;
 		Statement myStmt = null;
@@ -368,14 +395,17 @@ class Database implements DatabaseInformation{
 			//4. Process the result set
 			while(myRs.next()){
 				String temp = "";
+				resultTuple = new ArrayList<String>();
 				for (int i = 1; i <= numCol; i++) {
+					temp = "";
 			        String columnValue = myRs.getString(i);
 			        
 			        temp = columnValue;
 			        //Add tuple to list
 					temp.trim(); //trim trailing whitespace
-					list.add(temp);
+					resultTuple.add(temp);
 			    }
+				list.add(resultTuple);
 			}
 		}
 		catch(Exception exc){
