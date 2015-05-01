@@ -18,7 +18,7 @@ public class AccountCreation extends JFrame{
 	 * Pre: Valid login is passed into the constructor
 	 * Post: Instantiates a new instance of the AccountCreation class.
 	 *************************************************************************/
-	public AccountCreation(login originalLoginMenu){
+	public AccountCreation(Login originalLoginMenu){
 		//Sets the mainMenu data member to the login passed in
 		mainMenu = originalLoginMenu;
 		//Init the window
@@ -158,8 +158,14 @@ public class AccountCreation extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				if(e.getActionCommand().equals("Create Account")){
 					if(checkAttributes()){
-						JOptionPane.showMessageDialog(null, "Account Created");
-						returnToLogin();
+						printInformation();
+						if(addNewAccount()){
+							JOptionPane.showMessageDialog(null, "Account Created");
+							returnToLogin();	
+						}
+						else{
+							JOptionPane.showMessageDialog(null, "Account Creation Failed");
+						}
 					}
 				}
 			}
@@ -213,7 +219,7 @@ public class AccountCreation extends JFrame{
 		
 		//If the fields match but are empty, set return value to false and
 		//inform the user
-		else if(passwordText.getText().isEmpty()){
+		else if(passwordText.getPassword().length == 0){
 			JOptionPane.showMessageDialog(null, "Please enter a Password");
 			passwordsMatch = false;
 		}
@@ -292,20 +298,20 @@ public class AccountCreation extends JFrame{
 	}
 	
 	/**************************************************************************
-	 * Description: Method used to pass information back to the login menu
-	 * Return Type: void
-	 * Pre: None
-	 * Post: Copies all of the fields into Strings to pass back to the login
-	 *       menu.
+	 * Description: Method used to attempt to add an administrator to the 
+	 *              database based on the information entered
+	 * Return Type: boolean
+	 * Pre: We are connected to the database
+	 * Post: Returns whether or not the administrator was added to the 
+	 * 		 database.
 	 *************************************************************************/
 	@SuppressWarnings("deprecation")
-	private void getNewAccountInformation(String firstName, String lastName, String username,
-										 String password, String emailAddress){
-		firstName = firstNameText.getText();
-		lastName = lastNameText.getText();
-		username = usernameText.getText();
-		password = passwordText.getText();
-		emailAddress = emailText.getText();
+	private boolean addNewAccount(){
+		return AdminDatabaseAccess.addAdministrator(usernameText.getText().trim(),
+									  		 		passwordText.getText().trim(),
+									  		 		firstNameText.getText().trim(),
+									  		 		lastNameText.getText().trim(),
+									  		 		emailText.getText().trim());
 	}
 	
 	/**************************************************************************
@@ -339,9 +345,25 @@ public class AccountCreation extends JFrame{
 		myFrame.setVisible(true);
 	}
 	
+	/**************************************************************************
+	 * Description: Debug function to check what values the JTextFields are
+	 *              reading in
+	 * Return Type: void
+	 * Pre: None
+	 * Post: Prints debug info to the console
+	 *************************************************************************/
+	@SuppressWarnings("deprecation")
+	private void printInformation(){
+		System.out.println(firstNameText.getText());
+		System.out.println(lastNameText.getText());
+		System.out.println(usernameText.getText());
+		System.out.println(passwordText.getText());
+		System.out.println(emailText.getText());
+	}
+	
 	//all Private data members of the class
 	//login to store the original menu
-	private login mainMenu;
+	private Login mainMenu;
 	
 	//JFrame and JPanel on which we display information
 	private JFrame myFrame;
@@ -370,5 +392,4 @@ public class AccountCreation extends JFrame{
 	//JButtons for navigation and user logic
 	private JButton cancelButton;
 	private JButton createButton;
-
 }

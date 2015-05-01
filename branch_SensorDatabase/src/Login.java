@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class login extends JFrame{
+public class Login extends JFrame{
 	
 	/**
 	 * 
@@ -22,7 +22,7 @@ public class login extends JFrame{
 	 * Pre: Valid login is passed into the constructor
 	 * Post: Instantiates a new instance of the newUserPanel class.
 	 *************************************************************************/
-	public login(){
+	public Login(){
 		createAccount = new AccountCreation(this);
 		init();
 	}
@@ -36,7 +36,7 @@ public class login extends JFrame{
 		panel.setSize(350, 150);
 		
 		//User Label
-		userLabel = new JLabel("User");
+		userLabel = new JLabel("Username");
 		userLabel.setBounds(10, 10, 80, 25);
 		panel.add(userLabel);
 		
