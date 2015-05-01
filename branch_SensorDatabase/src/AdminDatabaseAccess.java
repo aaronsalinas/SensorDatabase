@@ -10,119 +10,6 @@ import java.util.List;
 
 public class AdminDatabaseAccess extends Database{
 	
-	/**
-	 * listAddAdministrators
-	 * <p> This function returns an List of strings holding all information
-	 * for all administrators in the system
-	 * @return
-	 */
-	public static List<String> toListAllAdministrators(){
-		List<String> admins = new ArrayList<String>();
-		String query = "SELECT * FROM Administrator";
-		boolean success; //Denotes successful query
-		
-		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = toListAdministratorsQuery(admins, query);
-		
-		if(!success){
-			System.err.println(DBQUERY_ERROR);
-		}
-		
-		return admins;
-	}
-	
-	/**
-	 * listAdministratorsByUsername
-	 * <p>
-	 * This function returns information for an administrator by username.
-	 * Empty string returned if none exists.
-	 * @param userName
-	 * @return
-	 */
-	public static List<String> toListAdministratorsByUsername(){
-		List<String> admins = new ArrayList<String>();
-		String query = "SELECT `UserID` FROM Administrator ";
-					    	
-		boolean success; //Denotes successful query
-		
-		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = toListAdministratorsQuery(admins, query);
-		
-		if(!success){
-			System.err.println(DBQUERY_ERROR);
-		}
-		
-		return admins;
-	}
-	
-	/**
-	 * listAdministratorsByFirstName
-	 * <p>
-	 * This function returns information for all admins with a first name
-	 * provided by the user. Empty string returned if none exists.
-	 * @param userName
-	 * @return
-	 */
-	public static List<String> toListAdministratorsByFirstName(){
-		List<String> admins = new ArrayList<String>();
-		String query = "SELECT `FirstName` FROM Administrator "; 
-						
-		boolean success; //Denotes successful query
-		
-		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = toListAdministratorsQuery(admins, query);
-		
-		if(!success){
-			System.err.println(DBQUERY_ERROR);
-		}
-		
-		return admins;
-	}
-	
-	/** listAdministratorsByLastName
-	 * <p>
-	 * This function returns information for all admins with a last name
-	 * provided by the user. Empty string returned if none exists.
-	 * @param userName
-	 * @return
-	 */
-	public static List<String> toListAdministratorsByLastName(){
-		List<String> admins = new ArrayList<String>();
-		String query = "SELECT `LastName` FROM Administrator"; 
-						
-		boolean success; //Denotes successful query
-		
-		success = toListAdministratorsQuery(admins, query);
-		
-		if(!success){
-			System.err.println(DBQUERY_ERROR);
-		}
-		
-		return admins;
-	}
-	
-	/** listAdministratorsByEmail
-	 * <p>
-	 * This function returns information for all admins using an admins email on record
-	 * as a match. Empty List is returned if user doesn't exists.
-	 * @param userName
-	 * @return
-	 */
-	public static List<String> toListAdministratorsByEmail(){
-		List<String> admins = new ArrayList<String>();
-		String query = "SELECT `Email` FROM Administrator ";
-						
-		boolean success; //Denotes successful query
-		
-		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = toListAdministratorsQuery(admins, query);
-		
-		if(!success){
-			System.err.println(DBQUERY_ERROR);
-		}
-		
-		return admins;
-	}
 	
 	/**
 	 * addAdministrator
@@ -241,6 +128,126 @@ public class AdminDatabaseAccess extends Database{
 		}
 		
 		return valid;
+	}
+	
+	
+	
+	/* ****************************************************************
+	 * 						List Functions 			
+	 * 
+	 * ****************************************************************/
+	/**
+	 * listAddAdministrators
+	 * <p> This function returns an List of strings holding all information
+	 * for all administrators in the system
+	 * @return
+	 */
+	public static List<String> toListAllAdministrators(){
+		List<String> admins = new ArrayList<String>();
+		String query = "SELECT * FROM Administrator";
+		boolean success; //Denotes successful query
+		
+		// format of return string (UserID, Password, FirstName, LastName, Email)
+		success = toListAdministratorsQuery(admins, query);
+		
+		if(!success){
+			System.err.println(DBQUERY_ERROR);
+		}
+		
+		return admins;
+	}
+	
+	/**
+	 * listAdministratorsByUsername
+	 * <p>
+	 * This function returns information for an administrator by username.
+	 * Empty string returned if none exists.
+	 * @param userName
+	 * @return
+	 */
+	public static List<String> toListAdministratorsByUsername(){
+		List<String> admins = new ArrayList<String>();
+		String query = "SELECT `UserID` FROM Administrator ";
+					    	
+		boolean success; //Denotes successful query
+		
+		// format of return string (UserID, Password, FirstName, LastName, Email)
+		success = toListAdministratorsQuery(admins, query);
+		
+		if(!success){
+			System.err.println(DBQUERY_ERROR);
+		}
+		
+		return admins;
+	}
+	
+	/**
+	 * listAdministratorsByFirstName
+	 * <p>
+	 * This function returns information for all admins with a first name
+	 * provided by the user. Empty string returned if none exists.
+	 * @param userName
+	 * @return
+	 */
+	public static List<String> toListAdministratorsByFirstName(){
+		List<String> admins = new ArrayList<String>();
+		String query = "SELECT `FirstName` FROM Administrator "; 
+						
+		boolean success; //Denotes successful query
+		
+		// format of return string (UserID, Password, FirstName, LastName, Email)
+		success = toListAdministratorsQuery(admins, query);
+		
+		if(!success){
+			System.err.println(DBQUERY_ERROR);
+		}
+		
+		return admins;
+	}
+	
+	/** listAdministratorsByLastName
+	 * <p>
+	 * This function returns information for all admins with a last name
+	 * provided by the user. Empty string returned if none exists.
+	 * @param userName
+	 * @return
+	 */
+	public static List<String> toListAdministratorsByLastName(){
+		List<String> admins = new ArrayList<String>();
+		String query = "SELECT `LastName` FROM Administrator"; 
+						
+		boolean success; //Denotes successful query
+		
+		success = toListAdministratorsQuery(admins, query);
+		
+		if(!success){
+			System.err.println(DBQUERY_ERROR);
+		}
+		
+		return admins;
+	}
+	
+	/** listAdministratorsByEmail
+	 * <p>
+	 * This function returns information for all admins using an admins email on record
+	 * as a match. Empty List is returned if user doesn't exists.
+	 * @param userName
+	 * @return
+	 */
+	public static List<String> toListAdministratorsByEmail(){
+		List<String> admins = new ArrayList<String>();
+		String query = "SELECT `Email` FROM Administrator ";
+						
+		boolean success; //Denotes successful query
+		
+		// format of return string (UserID, Password, FirstName, LastName, Email)
+		success = toListAdministratorsQuery(admins, query);
+		
+		if(!success){
+			System.err.println(DBQUERY_ERROR);
+		}
+		
+		return admins;
 	}
 	
 	
