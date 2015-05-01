@@ -478,7 +478,7 @@ public class DatabaseSearchEngine extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, record the date values indicated by the
 				//user
-				if(e.getActionCommand().equals("Search Dates")){
+				if(e.getActionCommand().equals("Search ALL by Dates")){
 					beginDateString = (String) beginDateYearDropDown.getSelectedItem() + "-";
 					beginDateString += (String) beginDateMonthDropDown.getSelectedItem() + "-";
 					beginDateString += (String) beginDateDayDropDown.getSelectedItem() + " ";
@@ -515,7 +515,7 @@ public class DatabaseSearchEngine extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, record the date values indicated by the
 				//user
-				if(e.getActionCommand().equals("Search by Both")){
+				if(e.getActionCommand().equals("Search instrument by Dates")){
 					if(isValidQuery()){
 						beginDateString = (String) beginDateYearDropDown.getSelectedItem() + "-";
 						beginDateString += (String) beginDateMonthDropDown.getSelectedItem() + "-";
