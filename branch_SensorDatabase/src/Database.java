@@ -62,6 +62,16 @@ class Database implements DatabaseInformation{
 		return success;
 	}
 	
+	static protected boolean deleteFromTable(String query){
+		boolean success = false;
+		
+		if(executeUpdateQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
 	static protected boolean updateValuesInTable(String query){
 		boolean success = false;
 		
@@ -360,12 +370,12 @@ class Database implements DatabaseInformation{
 				String temp = "";
 				for (int i = 1; i <= numCol; i++) {
 			        String columnValue = myRs.getString(i);
-			        temp = temp + columnValue;
+			        
+			        temp = columnValue;
+			        //Add tuple to list
+					temp.trim(); //trim trailing whitespace
+					list.add(temp);
 			    }
-				
-				//Add tuple to list
-				temp.trim(); //trim trailing whitespace
-				list.add(temp);
 			}
 		}
 		catch(Exception exc){

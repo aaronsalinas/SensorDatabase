@@ -45,15 +45,15 @@ public class StoreSensorData {
 		ArrayList<Pair<String, String> > readingAttrDataType = data.toListSensorReadingRowAttrTypeList();
 		ArrayList<ArrayList<Pair<String, String> > > sensorReadings = data.toListSensorReadValues();
 		ArrayList<Pair<String, String> > realDataTypes = data.toListRealTypesList();
+		ArrayList<Pair<String, String> > ADCPCurDataRevert = new ArrayList<Pair<String, String> >(); //Stores old version of ADCP Current Value before update
 		boolean addedInstrument = false;
 		boolean addedInstrSerial = false;
 		boolean createADCPCurTable = false;
 		boolean addedADCPCurrentData = false;
 		boolean updatedADCPCurrentData = false;
 		boolean createReadingTable = false;
+		boolean addedReadings = false;
 		
-		ArrayList<String> ADCPCurDataRevert = new ArrayList<String>();
-				
 		//Check if Instrument exists in the database
 		if(!SensorDatabaseAccess.checkIfInstrumentExists(instrument)){
 			//Add Instrument into DB if not exists
@@ -64,7 +64,7 @@ public class StoreSensorData {
 				success = false;
 			}
 		}
-		
+
 		//Check if Instrument/Serial exists in the database
 		if(success && !SensorDatabaseAccess.checkIfInstrumentSerialExists(instrument, serial)){
 			//Add Instrument/Serial into DB if not exists
@@ -74,8 +74,8 @@ public class StoreSensorData {
 			else{ //Instrument/Serial not added due to error in query
 				success = false;
 			}
-			
 		}
+		
 		
 		//Check if ADCP CurrentData Table exists for the database
 		if(success && !SensorDatabaseAccess.checkIfADCPCurrentTableExists(instrument)){
@@ -87,6 +87,7 @@ public class StoreSensorData {
 				success = false;
 			}
 		}
+
 		//Check if tuple for ADCPCurrent exists
 		if(success && !SensorDatabaseAccess.checkIfADCPCurrentDataExists(instrument, serial)){
 			//Add tuple for current instrument into ADCPCurrent
@@ -98,13 +99,18 @@ public class StoreSensorData {
 			}
 		}//Update tuple if current ADCP is newer than one stored in DB
 		else if(success && !SensorDatabaseAccess.checkIfADCPCurrentDataNewer(instrument, serial, timeStamp)){
-			ADCPCurDataRevert = SensorDatabaseAccess.toListADCPCurrentData(instrument, serial);
+			
+			//Store Copy of current existing tuple for ADCPCurrentData for instrument
+			ArrayList<String> tempStr = SensorDatabaseAccess.toListADCPCurrentData(instrument, serial); //Get values for current stored CurrentData
+			
+			for(int i = 0; i < tempStr.size(); i++){
+				Pair<String, String> tempPair = new Pair<String, String>(ADCPCurrentData.get(i).first,tempStr.get(i));
+				ADCPCurDataRevert.add(tempPair);
+			}
+			
 			//Update existing tuple for instrument/serial in ADCPCurrentData table
 			if(SensorDatabaseAccess.updateADCPCurrentData(instrument, serial, timeStamp, ADCPCurrentData)){
 				updatedADCPCurrentData = true;
-			}
-			else{
-				success = false;
 			}
 		}
 		
@@ -119,38 +125,39 @@ public class StoreSensorData {
 			}
 		}
 		
-		ArrayList<ArrayList<Pair<String, String> > > addedReadings = new ArrayList<>();
+		ArrayList<ArrayList<Pair<String, String> > > addedReadingsList = new ArrayList<>();
 		
 		
 		//Add all sensor readings into tables
+		addedReadings = true; //Assume all tuples can be added, If not set false
 		if(success){
-			System.out.println("Adding Readings");
-			if(SensorDatabaseAccess.addInstrumentSensorReadings(instrument, serial, sensorReadings, addedReadings)){
-				
+			if(SensorDatabaseAccess.addSensorReadings(instrument, serial, sensorReadings, addedReadingsList)){
+				//Do Nothing If Successful
+				addedReadings = true;
 			}
 			else{
 				success = false;
+				addedReadings = false;
 			}
 			
 		}
-		
 		
 		/* If failure in any steps, undo all changes in reverse order*/
 		if(!success){
 			
 			//Undo Insert into SensorReading table for instrument
-			
+			if(addedReadings) SensorDatabaseAccess.removeSensorReadings(instrument, serial, addedReadingsList);
 			
 			//Drop SensorReading table if created
 			if(createReadingTable) SensorDatabaseAccess.dropSensorReadingTable(instrument);
 			
 			//Undo ADCP Current Add/Update into ADCP Current Table
 			if(addedADCPCurrentData){
-				//Undo add into ADCP Current Data Table
+				SensorDatabaseAccess.removeADCPCurrentData(instrument, serial);
 				
 			}
 			else if(updatedADCPCurrentData){
-				//Revert to last storing for ADCPCurrent Data
+				SensorDatabaseAccess.updateADCPCurrentData(instrument, serial, ADCPCurDataRevert.get(0).second, ADCPCurDataRevert);
 			}
 			
 			//Drop ADCP Current Table
