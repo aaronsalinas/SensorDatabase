@@ -121,13 +121,13 @@ public class Login extends JFrame{
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, attempt to login with the info
-				//provided. If successful, launch the searchEngine
+				//provided. If successful, launch the admin browser
 				if(e.getActionCommand().equals("User Login")){
 					getLoginInformation();
 					if(validateLoginInfo() && AdminDatabaseAccess.validateUser(username, password)){
 						JOptionPane.showMessageDialog(null, "Logged in as " + username);
 						hideScreen();
-						
+						new AdminDatabaseBrowser();
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "Login Failed");
@@ -151,14 +151,14 @@ public class Login extends JFrame{
 	private void addGuestLoginButton(){
 		//Instantiate a the private data member "Guest Login", and set the 
 		//position and size
-		guestButton = new JButton("Guest Login");
+		guestButton = new JButton("Guest");
 		guestButton.setBounds(120, 80, 100, 25);
 		
 		//Add an ActionListener to the "Guest Login" button
 		guestButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				//If the button is selected, login as a guest
-				if(e.getActionCommand().equals("Guest Login")){
+				if(e.getActionCommand().equals("Guest")){
 					JOptionPane.showMessageDialog(null, "Logged in as Guest");
 					hideScreen();
 					new DatabaseSearchEngine();

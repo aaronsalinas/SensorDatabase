@@ -29,6 +29,13 @@ public class DatabaseSearchEngine extends JFrame{
 	 * Post: Instantiates a new instance of the DatabaseSearchEngine class.
 	 *************************************************************************/
 	public DatabaseSearchEngine(){
+		isAdmin = false;
+		init();
+	}
+	
+	public DatabaseSearchEngine(AdminDatabaseBrowser attachmentBrowser){
+		adminBrowser = attachmentBrowser;
+		isAdmin = true;
 		init();
 	}
 	
@@ -49,12 +56,12 @@ public class DatabaseSearchEngine extends JFrame{
 		//Set default close operation
 		myFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		//Set the title of the window
-		myFrame.setTitle("Database Login");
+		myFrame.setTitle("Database Search Engine");
 		
 		//Instantiate the new panel
 		panel = new JPanel(null);
 		//Set the size of the panel
-		panel.setSize(400, 300);
+		panel.setSize(365, 250);
 		
 		selectedInstrument = new String();
 		selectedSerial = new String();
@@ -67,17 +74,20 @@ public class DatabaseSearchEngine extends JFrame{
 		panel.add(searchLabel);
 		
 		instrumentLabel = new JLabel();
-		instrumentLabel.setBounds(200, 15, 125, 25);
+		instrumentLabel.setBounds(220, 15, 125, 25);
 		
 		addSearchButton();
 		addResetButton();
+		if(isAdmin){
+			addAdminButton();
+		}
 		
 		//Add the frame to the panel
 		myFrame.add(panel);
 		//Set the frame to focusable, visible, and set the size
 		myFrame.setFocusable(true);
 		myFrame.setVisible(true);
-		myFrame.setSize(400, 300);
+		myFrame.setSize(365, 250);
 	}
 	
 	/**************************************************************************
@@ -108,7 +118,7 @@ public class DatabaseSearchEngine extends JFrame{
 			instrumentDropDown.addItem(item);
 		}
 		
-		//Add the "instrumentDropDown" to the panal
+		//Add the "instrumentDropDown" to the panel
 		panel.add(instrumentDropDown);
 		
 		//Add an ActionListener to the "instrumentDropDown"
@@ -216,7 +226,7 @@ public class DatabaseSearchEngine extends JFrame{
 		//Instantiate a the private data member "Reset", and set the 
 		//position and size
 		resetButton = new JButton("Reset");
-		resetButton.setBounds(200, 100, 100, 25);
+		resetButton.setBounds(210, 100, 100, 25);
 				
 		//Add an ActionListener to the "Reset" button
 		resetButton.addActionListener(new ActionListener() {
@@ -233,6 +243,36 @@ public class DatabaseSearchEngine extends JFrame{
 				}
 			}
 		});
+	}
+	
+	
+	/**************************************************************************
+	 * Description: Adds the "adminButton" button to the JPanel
+	 * Return Type: void
+	 * Pre: None
+	 * Post: Instantiates the private data member adminButton, sets the size
+	 *       and location, then adds an ActionListener to it indicating to
+	 *       hide the search engine and show the adminBrowser
+	 *************************************************************************/
+	private void addAdminButton(){
+		//Instantiate a the private data member "addAdmin", and set the 
+		//position and size
+		adminButton = new JButton("Admin Menu");
+		adminButton.setBounds(100, 175, 150, 25);
+				
+		//Add an ActionListener to the "addAdmin" button
+		adminButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				//If the button is selected, hide this screen and display
+				//the adminBrowser
+				if(e.getActionCommand().equals("Admin Menu")){
+					hideScreen();
+					adminBrowser.showScreen();
+				}
+			}
+		});
+		//Add this Button to the panel
+		panel.add(adminButton);
 	}
 	
 	/**************************************************************************
@@ -304,4 +344,8 @@ public class DatabaseSearchEngine extends JFrame{
 	//JButtons to allow user interaction
 	private JButton resetButton;
 	private JButton searchButton;
+	private JButton adminButton;
+	
+	private AdminDatabaseBrowser adminBrowser;
+	private boolean isAdmin;
 }

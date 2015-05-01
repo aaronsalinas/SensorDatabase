@@ -53,7 +53,7 @@ public class AdminDatabaseBrowser extends JFrame{
 		panel.setSize(300, 150);
 		
 		inputFileName = new String();
-		adminEngine = new DatabaseSearchEngine();
+		adminEngine = new DatabaseSearchEngine(this);
 		adminEngine.hideScreen();
 		
 		addOpenSearchEngineButton();
@@ -134,14 +134,19 @@ public class AdminDatabaseBrowser extends JFrame{
 	 * Pre: None
 	 * Post: Instantiates the private data member fileChooser. Then sets the
 	 * 		 designated file types we are interested in opening. If the file
-	 *       chosen is the correct format, record the absoute path.
+	 *       chosen is the correct format, record the absolute path.
 	 *************************************************************************/	
 	public void chooseFile(){
+		//Initialize JFileChooser
 		fileChooser = new JFileChooser();
+		//Set the filter so we can only open .asc and .txt files
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	        "ASC & TXT", "acs", "txt");
+	    //apply the filter
 	    fileChooser.setFileFilter(filter);
+	    //Set the returnVal to the type of file being opened
 	    int returnVal = fileChooser.showOpenDialog(getParent());
+	    //If the returnVal is of the approved format, store the absolute path.
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	inputFileName = fileChooser.getSelectedFile().getAbsolutePath();
 	    }
@@ -167,14 +172,23 @@ public class AdminDatabaseBrowser extends JFrame{
 		myFrame.setVisible(true);
 	}
 	
+	
+	//private data members for the AdminDataBaseBrowser class
+	
+	//String to hold the absolute path of an input file.
 	private String inputFileName;
+	//JFrame and JPanel for graphical output
 	private JFrame myFrame;
 	private JPanel panel;
 	
+	//JFileChooser we use to browse files
 	private JFileChooser fileChooser;
 	
+	
+	//JButtons that allow the user to interact with the program
 	private JButton openSearchEngineButton;
 	private JButton uploadFileToDatabaseButton;
 	
+	//A DataBaseSearchEngine the administrator can call
 	private DatabaseSearchEngine adminEngine;
 }
