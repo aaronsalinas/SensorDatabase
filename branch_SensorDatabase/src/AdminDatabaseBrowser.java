@@ -54,7 +54,6 @@ public class AdminDatabaseBrowser extends JFrame{
 		
 		inputFileName = new String();
 		adminEngine = new DatabaseSearchEngine(this);
-		adminEngine.hideScreen();
 		
 		addOpenSearchEngineButton();
 		addUploadFileToDatabaseButton();

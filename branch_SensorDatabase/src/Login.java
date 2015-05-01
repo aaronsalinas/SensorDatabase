@@ -161,7 +161,7 @@ public class Login extends JFrame{
 				if(e.getActionCommand().equals("Guest")){
 					JOptionPane.showMessageDialog(null, "Logged in as Guest");
 					hideScreen();
-					new DatabaseSearchEngine();
+					new DatabaseSearchEngine().showScreen();
 				}
 			}
 		});
