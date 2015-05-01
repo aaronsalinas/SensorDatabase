@@ -368,7 +368,7 @@ public class SensorDatabaseAccess extends Database{
 	 */
 	static private boolean addInstrumentSerialQuery(String instrument, String serial){
 		boolean success = true; //assume success;
-;
+
 		String query;
 
 		query = "INSERT INTO `InstrumentSerial` (`Instrument`, `Serial Number`)"
@@ -814,6 +814,7 @@ public class SensorDatabaseAccess extends Database{
 	static private boolean checkIfADCPCurrentTableExistsQuery(String instrument){
 		boolean exists = false;
 		String tableName = "ADCPCurrentData_" + instrument;		
+		
 		
 		exists = checkIfTableExists(tableName);
 				

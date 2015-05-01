@@ -22,8 +22,7 @@ public class SensorDataProcessing{
 	/* Stores sensor Readings (Attribute, Value) in a list of list of pairs*/
 	private ArrayList<ArrayList<Pair<String, String> > > sensorReadValues = new ArrayList<ArrayList<Pair<String, String> > >();
 	private ArrayList<Pair<String, String> > sensorReadingRowAttrTypeList = new ArrayList<Pair<String, String> >();
-	//private ArrayList<String> rowAttributes = new ArrayList<String>();
-	//private ArrayList<String> rowAttributeUnits = new ArrayList<String>();
+
 	
 	/**
 	 * Default Constructor

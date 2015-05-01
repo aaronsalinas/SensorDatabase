@@ -39,17 +39,7 @@ class Database implements DatabaseInformation{
 		
 		return success;
 	}
-	
-	static protected boolean checkIfExists(String query){
-		boolean success = false;
-		
-		if(executeUpdateQuery(query)){
-			success = true;
-		}
-		
-		return success;
-	}
-	
+
 	static protected boolean insertIntoTable(String query){
 		boolean success = false;
 		
@@ -98,10 +88,58 @@ class Database implements DatabaseInformation{
 		}
 	}
 	
+	/**
+	 * This function returns a boolean indicating if the database has successfully connected
+	 * @return boolean
+	 */
+	public static boolean checkIfDatabaseConnect(){
+		boolean connected = false;
+		Connection myConn = null;
+
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+			connected = true;
+		}
+		catch(Exception e){}
+		try{myConn.close();} catch(Exception exc){};
+
+		
+		
+		return connected;
+	}
+	
+	/**
+	 * A query is passed into this function which invokes a query function returning if a
+	 * tuple exists in the table specified in the query.
+	 * @param query
+	 * @return
+	 */
+	static protected boolean checkIfExists(String query){
+		boolean success = false;
+		
+		if(checkIfExistsQuery(query)){
+			success = true;
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * This function takes in a query and invokes a query function which checks if a certain 
+	 * table exists
+	 * @param query
+	 * @return
+	 */
 	public static boolean checkIfTableExists(String tableName){
 		boolean exists = false;
 		
-		exists = checkIfTableExistsQuery(tableName);
+		String query = "SELECT COUNT(*) "
+				+ "FROM information_schema.tables "
+				+ "WHERE table_schema = '" + DBNAME + "' "
+				+ "AND table_name = '" + tableName + "'";
+		
+		exists = checkIfExistsQuery(query);
 		
 		return exists;
 	}
@@ -159,7 +197,6 @@ class Database implements DatabaseInformation{
 		return success;
 	}
 	
-	
 	static private boolean executeQueryQuery(String query){
 		boolean success = true; //assume success
 		
@@ -203,8 +240,6 @@ class Database implements DatabaseInformation{
 		return success;
 	}
 	
-	
-	
 	/**
 	 * This function calls a query that checks if a table, whose name is passed
 	 * into the function by the user, exists in the currently working database.
@@ -212,26 +247,33 @@ class Database implements DatabaseInformation{
 	 * in query (in which a error message will result if failure)
 	 * @param tableName
 	 * @return
+	 * @throws SQLException 
 	 */
-	static private boolean checkIfTableExistsQuery(String tableName){
+	static private boolean checkIfExistsQuery(String query){
 		boolean tableExists = false;
 		
 		//Connect to database
 		Connection myConn = null;
 		Statement myStmt = null;
 		ResultSet myRs = null;
-		String query;
+		
 		try{
 			//1. Get a connection to the database
 			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+		}
+		catch(Exception e){
+			System.out.println(DBCONN_ERROR);
+		}
+		try{
 			//2. Create a statement
 			myStmt = myConn.createStatement();
-			//3, Execute SQL query
-			query = "SELECT COUNT(*) "
-					+ "FROM information_schema.tables "
-					+ "WHERE table_schema = '" + DBNAME + "' "
-					+ "AND table_name = '" + tableName + "'";
-			
+		}
+		catch(Exception e){
+			System.out.println(DBSTATEMENT_ERROR);
+		}
+		//3, Execute SQL query
+		
+		try{
 			myRs = myStmt.executeQuery(query);
 			//4. Process the result set
 			while(myRs.next()){
@@ -242,16 +284,15 @@ class Database implements DatabaseInformation{
 				}
 			}
 		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBQUERY_ERROR);
+		catch(Exception e){
+			System.out.println(DBQUERY_ERROR);
 		}
-		finally{
-			//Disconnect from Database
-			try{myRs.close();} catch(Exception exc){};
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
+
+		//Disconnect from Database
+		try{myRs.close();} catch(Exception exc){};
+		try{myStmt.close();} catch(Exception exc){}
+		try{myConn.close();} catch(Exception exc){}
+	
 
 		return tableExists;
 	}

@@ -39,11 +39,10 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> toListAdministratorsByUsername(String userName){
+	public static List<String> toListAdministratorsByUsername(){
 		List<String> admins = new ArrayList<String>();
-		String query = "SELECT * FROM Administrator " +
-					   "WHERE UserID = '" + userName +"';"; 
-						
+		String query = "SELECT `UserID` FROM Administrator ";
+					    	
 		boolean success; //Denotes successful query
 		
 		// format of return string (UserID, Password, FirstName, LastName, Email)
@@ -64,10 +63,9 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> toListAdministratorsByFirstName(String firstName){
+	public static List<String> toListAdministratorsByFirstName(){
 		List<String> admins = new ArrayList<String>();
-		String query = "SELECT * FROM Administrator " +
-					   "WHERE FirstName = '" + firstName +"';"; 
+		String query = "SELECT `FirstName` FROM Administrator "; 
 						
 		boolean success; //Denotes successful query
 		
@@ -88,39 +86,12 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> toListAdministratorsByLastName(String lastName){
+	public static List<String> toListAdministratorsByLastName(){
 		List<String> admins = new ArrayList<String>();
-		String query = "SELECT * FROM Administrator " +
-					   "WHERE LastName = '" + lastName +"';"; 
+		String query = "SELECT `LastName` FROM Administrator"; 
 						
 		boolean success; //Denotes successful query
 		
-		// format of return string (UserID, Password, FirstName, LastName, Email)
-		success = toListAdministratorsQuery(admins, query);
-		
-		if(!success){
-			System.err.println(DBQUERY_ERROR);
-		}
-		
-		return admins;
-	}
-	
-	/** listAdministratorsByFullName
-	 * <p>
-	 * This function returns information for all admins using a first and last name
-	 * provided by the user. Empty string returned if none exists.
-	 * @param userName
-	 * @return
-	 */
-	public static List<String> toListAdministratorsByLastName(String firstName, String lastName){
-		List<String> admins = new ArrayList<String>();
-		String query = "SELECT * FROM Administrator " +
-					   "WHERE FirstName = '" + firstName + "AND "
-					   + "LastName = '" + lastName + "';"; 
-						
-		boolean success; //Denotes successful query
-		
-		// format of return string (UserID, Password, FirstName, LastName, Email)
 		success = toListAdministratorsQuery(admins, query);
 		
 		if(!success){
@@ -137,10 +108,9 @@ public class AdminDatabaseAccess extends Database{
 	 * @param userName
 	 * @return
 	 */
-	public static List<String> toListAdministratorsByEmail(String email){
+	public static List<String> toListAdministratorsByEmail(){
 		List<String> admins = new ArrayList<String>();
-		String query = "SELECT * FROM Administrator " +
-					   "WHERE Email = '" + email + "';"; 
+		String query = "SELECT `Email` FROM Administrator ";
 						
 		boolean success; //Denotes successful query
 		
@@ -152,63 +122,6 @@ public class AdminDatabaseAccess extends Database{
 		}
 		
 		return admins;
-	}
-	
-	/**
-	 * listAdministratorsQuery
-	 * <p>
-	 * This function fetches a result set of administrators in the system and returns 
-	 * it in a list of strings, each string pertaining to a single tuple in the table.
-	 * A query is passed into the function, giving expanded functionality for constraints
-	 * defined by the user.
-	 * @param admins
-	 * @param query
-	 * @return
-	 */
-	private static boolean toListAdministratorsQuery(List<String> admins, String query){
-		boolean success = true;
-		
-		//Connect to database
-		Connection myConn = null;
-		Statement myStmt = null;
-		ResultSet myRs = null;
-		ResultSetMetaData rsMd;
-		try{
-			//1. Get a connection to the database
-			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
-			//2. Create a statement
-			myStmt = myConn.createStatement();
-			//3, Execute SQL query
-			myRs = myStmt.executeQuery(query);
-			rsMd = myRs.getMetaData();
-			int numCol = rsMd.getColumnCount();
-			//4. Process the result set
-			while(myRs.next()){
-				String temp = "";
-				for (int i = 1; i <= numCol; i++) {
-			        String columnValue = myRs.getString(i);
-			        //System.out.print(columnValue);
-			        temp = temp + columnValue + " ";
-			    }
-				
-				//Add tuple to list
-				temp.trim(); //trim trailing whitespace
-				admins.add(temp);
-			}
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBQUERY_ERROR);
-			success = false;
-		}
-		finally{
-			//Disconnect from Database
-			try{myRs.close();} catch(Exception exc){};
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
-		
-		return success;
 	}
 	
 	/**
@@ -225,7 +138,7 @@ public class AdminDatabaseAccess extends Database{
 	 * @return
 	 */
 	public static boolean addAdministrator(String username, String password, String firstName, 
-							String lastName, String email){
+																		String lastName, String email){
 		boolean success = false; //denotes success/failure of add
 		
 		//Check if administrator is not already in the system
@@ -241,71 +154,6 @@ public class AdminDatabaseAccess extends Database{
 		}
 		return success;
 		
-	}
-	
-	/**
-	 * addAdministratorInsert
-	 * <p>
-	 * This function connects to the database and adds a new administrator
-	 * 
-	 * @param username
-	 * @param password
-	 * @param firstName
-	 * @param lastName
-	 * @param email
-	 * @return
-	 */
-	private static boolean addAdministratorQuery(String username, String password, String firstName,
-										String lastName, String email){
-		
-		boolean success = true; //Assume success, false if failure occurs
-		
-		//Connect to database
-		Connection myConn = null;
-		Statement myStmt = null;
-		int myRs;
-		String query;
-		try{
-			//1. Get a connection to the database
-			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBCONN_ERROR);
-			success = false;
-		}
-		try{
-			//2. Create a statement
-			myStmt = myConn.createStatement();
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBSTATEMENT_ERROR);
-			success = false;
-		}
-		try{
-			//3, Execute SQL query
-			query = "INSERT INTO Administrator (UserID, Password, FirstName, LastName, Email)"
-					+ " VALUES(" +
-					 "'" + username + "',"+
-					 "'" + password + "'," +
-					 "'" + firstName + "'," +
-					 "'" + lastName + "'," +
-					 "'" + email + "');";			
-			
-			myRs = myStmt.executeUpdate(query); //Execute Query (add new admin)			
-		}
-		catch(SQLException exc){
-			exc.printStackTrace();
-			System.out.println(DBQUERY_ERROR);
-			success = false;
-		}
-		finally{
-			//Disconnect from Database
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
-		return success;
 	}
 	
 	/**
@@ -325,104 +173,11 @@ public class AdminDatabaseAccess extends Database{
 		return success;
 	}
 	
-	/**
-	 * This function runs a query to remove an administrator for the database provided with
-	 * the username of the administrator to be removed
-	 * @param username
-	 * @return
-	 */
-	private static boolean removeAdministratorQuery(String username){
-		boolean success = true; //Assume successful query
-		//Connect to database
-		Connection myConn = null;
-		Statement myStmt = null;
-		int myRs;
-		String query;
-		try{
-			//1. Get a connection to the database
-			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBCONN_ERROR);
-			success = false;
-		}
-		try{
-			//2. Create a statement
-			myStmt = myConn.createStatement();
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBSTATEMENT_ERROR);
-			success = false;
-		}
-		try{
-			//3, Execute SQL query
-			query = "DELETE FROM Administrator WHERE UserID = '" + username + "';";			
-			myRs = myStmt.executeUpdate(query); //Execute Query (delete new admin)			
-		}
-		catch(SQLException exc){
-			exc.printStackTrace();
-			System.out.println(DBQUERY_ERROR);
-			success = false;
-		}
-		finally{
-			//Disconnect from Database
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
-		
-		return success;
-	}
-	
 	public static boolean changePassword(String username, String newPassword){
 		boolean success = true;//Assume success
 		
 		//Call query to change password
 		success = changePasswordQuery(username, newPassword);	
-		
-		return success;
-	}
-	
-	private static boolean changePasswordQuery(String username, String newPassword){
-		boolean success = true;
-		
-		//Connect to database
-		Connection myConn = null;
-		Statement myStmt = null;
-		int myRs;
-		String query;
-		try{
-			//1. Get a connection to the database
-			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBCONN_ERROR);
-		}
-		try{
-			//2. Create a statement
-			myStmt = myConn.createStatement();
-		}catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBSTATEMENT_ERROR);
-		}
-		try{	
-			//3, Execute SQL query
-			query = "UPDATE Administrator SET Password = '" + newPassword +
-					"' WHERE UserID = '" + username + "'";
-							
-			myRs = myStmt.executeUpdate(query);
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBQUERY_ERROR);
-		}
-		finally{
-			//Disconnect from Database
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
 		
 		return success;
 	}
@@ -440,42 +195,13 @@ public class AdminDatabaseAccess extends Database{
 	public static boolean checkIfAdminExists(String username){
 		boolean adminExists = false;
 		
-		//Connect to database
-		Connection myConn = null;
-		Statement myStmt = null;
-		ResultSet myRs = null;
-		String query;
-		try{
-			//1. Get a connection to the database
-			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
-			//2. Create a statement
-			myStmt = myConn.createStatement();
-			//3, Execute SQL query
-			query = "SELECT COUNT(*) "
+		
+		String query = "SELECT COUNT(*) "
 				  + "FROM Administrator "
 				  + "WHERE UserID = \'" + username + "\';";
-				
-			myRs = myStmt.executeQuery(query);
-			//4. Process the result set
-			while(myRs.next()){
-				int count = Integer.parseInt(myRs.getString("COUNT(*)"));
-				//Check if admin exists count > 0
-				if(count > 0){
-					adminExists = true;
-				}
-			}
-		}
-		catch(Exception exc){
-			exc.printStackTrace();
-			System.err.println(DBQUERY_ERROR);
-		}
-		finally{
-			//Disconnect from Database
-			try{myRs.close();} catch(Exception exc){};
-			try{myStmt.close();} catch(Exception exc){}
-			try{myConn.close();} catch(Exception exc){}
-		}
 		
+		adminExists = checkIfExists(query);
+
 		return adminExists;
 	}
 	
@@ -503,6 +229,56 @@ public class AdminDatabaseAccess extends Database{
 		}
 		
 		return password;
+	}
+	
+	
+	public static boolean validateUser(String username, String password){
+		boolean valid = false;
+		
+		//Check if the user is in the database
+		if(checkIfAdminExists(username)){
+			valid = validateUserQuery(username, password);
+		}
+		
+		return valid;
+	}
+	
+	
+	/* ****************************************************************
+	 * 						Query Functions 			
+	 * 
+	 * ****************************************************************/
+	
+	/**
+	 * addAdministratorInsert
+	 * <p>
+	 * This function connects to the database and adds a new administrator
+	 * 
+	 * @param username
+	 * @param password
+	 * @param firstName
+	 * @param lastName
+	 * @param email
+	 * @return
+	 */
+	private static boolean addAdministratorQuery(String username, String password, String firstName,
+										String lastName, String email){
+		
+		boolean success = true; //Assume success, false if failure occurs
+	
+		String query;
+	
+		query = "INSERT INTO Administrator (UserID, Password, FirstName, LastName, Email)"
+				+ " VALUES(" +
+				 "'" + username + "',"+
+				 "'" + password + "'," +
+				 "'" + firstName + "'," +
+				 "'" + lastName + "'," +
+				 "'" + email + "');";			
+			
+		success = insertIntoTable(query);
+		
+		return success;
 	}
 	
 	/**
@@ -573,4 +349,108 @@ public class AdminDatabaseAccess extends Database{
 		
 		return success;
 	}
+
+	/**
+	 * This function runs a query to remove an administrator for the database provided with
+	 * the username of the administrator to be removed
+	 * @param username
+	 * @return
+	 */
+	private static boolean removeAdministratorQuery(String username){
+		boolean success = true; //Assume successful query
+		
+		String query = "DELETE FROM Administrator WHERE UserID = '" + username + "';";			
+		
+		success = updateTable(query);
+		
+		return success;
+	}
+	
+	private static boolean changePasswordQuery(String username, String newPassword){
+		boolean success = true;
+		
+		
+		String query = "UPDATE Administrator SET Password = '" + newPassword +
+				"' WHERE UserID = '" + username + "'";
+							
+		success = updateTable(query);
+		
+		
+		return success;
+	}
+
+	private static boolean validateUserQuery(String username, String password){
+		boolean valid = false; //Assume false
+		
+		String query = "SELECT COUNT(*) FROM `Administrator` WHERE `UserID`=\'" + username + "\' ";
+		query = query + "AND `Password`=\'" + password + "\'";
+		
+		valid = checkIfExists(query);
+		
+		
+		return valid;
+	}
+
+	/**
+	 * listAdministratorsQuery
+	 * <p>
+	 * This function fetches a result set of administrators in the system and returns 
+	 * it in a list of strings, each string pertaining to a single tuple in the table.
+	 * A query is passed into the function, giving expanded functionality for constraints
+	 * defined by the user.
+	 * @param admins
+	 * @param query
+	 * @return
+	 */
+	private static boolean toListAdministratorsQuery(List<String> admins, String query){
+		boolean success = true;
+		
+		//Connect to database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		ResultSetMetaData rsMd;
+		try{
+			//1. Get a connection to the database
+			myConn = DriverManager.getConnection(DBPATH, DBUSER, DBPASSWORD);
+			//2. Create a statement
+			myStmt = myConn.createStatement();
+			//3, Execute SQL query
+			myRs = myStmt.executeQuery(query);
+			rsMd = myRs.getMetaData();
+			int numCol = rsMd.getColumnCount();
+			//4. Process the result set
+			while(myRs.next()){
+				String temp = "";
+				for (int i = 1; i <= numCol; i++) {
+			        String columnValue = myRs.getString(i);
+			        temp = temp + columnValue;
+			    }
+				
+				//Add tuple to list
+				temp.trim(); //trim trailing whitespace
+				admins.add(temp);
+			}
+		}
+		catch(Exception exc){
+			exc.printStackTrace();
+			System.err.println(DBQUERY_ERROR);
+			success = false;
+		}
+		finally{
+			//Disconnect from Database
+			try{myRs.close();} catch(Exception exc){};
+			try{myStmt.close();} catch(Exception exc){}
+			try{myConn.close();} catch(Exception exc){}
+		}
+		
+		return success;
+	}
+
 }
+
+
+
+
+
+
