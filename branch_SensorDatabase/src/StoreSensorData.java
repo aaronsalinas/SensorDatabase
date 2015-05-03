@@ -22,7 +22,7 @@ public class StoreSensorData {
 		data = new SensorDataProcessing(file); //Store parsed information from file
 
 		
-		if(data.isValidFile()){
+		if(data.isValidFile() && DBAccess){
 			stored = storeInfoInDB(); //Store information into database
 			//Test Print
 			if(stored){
@@ -148,7 +148,7 @@ public class StoreSensorData {
 				}
 				
 				/* Create new table to store reads for the current instrument */
-				if(SensorDatabaseAccess.createInstrumentSensorReadingTable(instrument, serial, readingAttrDataType)){
+				if(SensorDatabaseAccess.createInstrumentSensorReadingTable(instrument, readingAttrDataType)){
 					createReadingTable = true;				
 				}
 				else{
