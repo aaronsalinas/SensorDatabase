@@ -166,6 +166,14 @@ public class Driver{
 		instrumentSearchMenu.add(instrumentAllDataItem);
 		
 		JMenuItem instrumentTimeframeItem = new JMenuItem("Timeframe");
+		instrumentTimeframeItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent actionEvent) {
+			    initPanel.removeAll();
+			    myFrame.add(new DatabaseSearchByInstrumentTime());
+			    myFrame.revalidate();
+			    myFrame.repaint();
+		    }
+		});
 		instrumentSearchMenu.add(instrumentTimeframeItem);
 		
 		

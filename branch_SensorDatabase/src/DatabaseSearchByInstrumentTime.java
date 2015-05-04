@@ -19,22 +19,20 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.border.TitledBorder;
 
 
-public class DatabaseSearchBySerialTime extends JPanel{
+public class DatabaseSearchByInstrumentTime extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 
-	public DatabaseSearchBySerialTime(){
+	public DatabaseSearchByInstrumentTime(){
 		init();
 	}
 	
 	private void init(){
 		
 		setLayout(new GridBagLayout());
-		setBorder(new TitledBorder("Select Instrument/Serial/Timeframe"));
+		setBorder(new TitledBorder("Select Instrument/Timeframe"));
 		setPreferredSize(new Dimension(600,600));
 		allInstruments = new ArrayList<String>();
-		allSerials = new ArrayList<String>();
-		serialLabel = new JLabel("Serial #'s");
 		
 		myConstraints = new GridBagConstraints();
 		addScrollPane();
@@ -78,7 +76,6 @@ public class DatabaseSearchBySerialTime extends JPanel{
 
 		//Initialize the "instrumentDropDown" JComboBox  
 		instrumentDropDown = new JComboBox<String>();
-		serialDropDown = new JComboBox<String>();
 
 		//Populate the JComboBox with all members of the "instrumentList"
 		for(int i = 0; i < allInstruments.size(); i++){
@@ -92,63 +89,31 @@ public class DatabaseSearchBySerialTime extends JPanel{
 			public void actionPerformed(ActionEvent e){
 				//Set "selectedInstrument" to the item selected by the user
 				String selectedInstrument = (String) instrumentDropDown.getSelectedItem();
-				//Initialize the "serialDropDown" JComboBox
-				initSerialDropDown(selectedInstrument);
-			}
-		});
-	}
-	
-	private void initSerialDropDown(String instrument){
-		myConstraints.weightx = 0.5;
-		myConstraints.gridy = 3;
-		myConstraints.gridx = 1;
-		add(serialLabel, myConstraints);
-		myConstraints.gridy++;
-		
-		allSerials.clear();
-		serialDropDown.removeAllItems();
-		
-		for(String item : SensorDatabaseAccess.toListSerialsByInstrument(instrument)){
-			allSerials.add(item);
-		}
-		
-		for(String item : allSerials){
-			serialDropDown.addItem(item);
-		}
-		
-		add(serialDropDown, myConstraints);
-		
-		revalidate();
-		repaint();
-		
-		//Add an ActionListener to the "serialDropDown"
-		serialDropDown.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				//sets "selectedSerial" to the item selected by the user
-				String selectedSerial = (String) serialDropDown.getSelectedItem();
 				Date beginValue = (Date)beginSpinner.getValue();
 				String formattedBeginValue = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(beginValue);
 				Date endValue = (Date)endSpinner.getValue();
 				String formattedEndValue = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(endValue);
-				if(SensorDatabaseAccess.checkIfADCPCurrentTableExists(instrument)){
+				
+				if(SensorDatabaseAccess.checkIfADCPCurrentTableExists(selectedInstrument)){
 					outputDisplay.setText("");
-					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(instrument)){
+					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(selectedInstrument)){
 						outputDisplay.append(item + " ");
 					}
 					outputDisplay.append("\n");
-					for(ArrayList<String> touples : SensorDatabaseAccess.toListSensorReadingByInstrumentSerialTime(instrument, selectedSerial, formattedBeginValue, formattedEndValue)){
+					for(ArrayList<String> touples : SensorDatabaseAccess.toListSensorReadingByInstrumentSerialTime(selectedInstrument, "*", formattedBeginValue, formattedEndValue)){
 						for(String item : touples){
 							outputDisplay.append(item + " ");
 						}
 						outputDisplay.append("\n");
 					}
 				}
-				else {
+				else{
 					outputDisplay.setText("No table for current selection");
 				}
 			}
 		});
 	}
+	
 	
 	
 	/**************************************************************************
@@ -185,11 +150,8 @@ public class DatabaseSearchBySerialTime extends JPanel{
 	
 	private JTextArea outputDisplay;
 	private JScrollPane scrollingDisplay;
-	private JLabel serialLabel;
 	private JComboBox<String> instrumentDropDown;
-	private JComboBox<String> serialDropDown;
 	
 	private GridBagConstraints myConstraints;
 	private ArrayList<String> allInstruments;
-	private ArrayList<String> allSerials;
 }

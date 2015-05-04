@@ -25,7 +25,7 @@ public class DatabaseSearchByInstrumentCurrent extends JPanel{
 	private void init(){
 		
 		setLayout(new GridBagLayout());
-		setBorder(new TitledBorder("Select Instrument/Serial"));
+		setBorder(new TitledBorder("Select Instrument"));
 		allInstruments = new ArrayList<String>();
 		
 		myConstraints = new GridBagConstraints();
