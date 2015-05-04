@@ -63,6 +63,7 @@ public class DatabaseSearchBySerialTime extends JPanel{
 		JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endSpinner, "YYYY:MM:dd HH:mm:ss");
 		endSpinner.setEditor(endEditor);
 		add(endSpinner, myConstraints);
+		myConstraints.gridy++;
 		
 		initInstrumentDropDown();
 	}
@@ -160,7 +161,7 @@ public class DatabaseSearchBySerialTime extends JPanel{
 	 **************************************************************************/
 	private void addScrollPane(){
 		myConstraints.gridx = 0;
-		myConstraints.gridy = 4;
+		myConstraints.gridy = 5;
 		myConstraints.gridwidth = 2;
 		myConstraints.weightx = 0.0;
 		myConstraints.fill = GridBagConstraints.SOUTH;
