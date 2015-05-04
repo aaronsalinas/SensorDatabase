@@ -99,8 +99,18 @@ public class DatabaseSearchBySerialCurrent extends JPanel{
 			public void actionPerformed(ActionEvent e){
 				//sets "selectedSerial" to the item selected by the user
 				String selectedSerial = (String) serialDropDown.getSelectedItem();
-				for(String item : SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(instrument, selectedSerial)){
-					outputDisplay.append(item);
+				if(SensorDatabaseAccess.checkIfADCPCurrentDataExists(instrument, selectedSerial)){
+					outputDisplay.setText("");
+					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(instrument)){
+						outputDisplay.append(item);
+					}
+					outputDisplay.append("\n");
+					for(String item : SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(instrument, selectedSerial)){
+						outputDisplay.append(item);
+					}
+				}
+				else {
+					outputDisplay.setText("No data for current selection");
 				}
 			}
 		});

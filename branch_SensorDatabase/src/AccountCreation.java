@@ -150,7 +150,12 @@ public class AccountCreation extends JPanel{
 							clearInformation();
 						}
 						else{
-							JOptionPane.showMessageDialog(null, "Account Creation Failed");
+							if(AdminDatabaseAccess.checkIfAdminExists(usernameText.getText())){
+								JOptionPane.showMessageDialog(null, "Username already exists");	
+							}
+							else{
+								JOptionPane.showMessageDialog(null, "Account creation failed");
+							}
 						}
 					}
 				}

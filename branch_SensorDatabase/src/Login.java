@@ -118,7 +118,7 @@ public class Login extends JPanel{
 								loggedIn = true;
 							}
 							else{
-								JOptionPane.showMessageDialog(null, "Login Failed");
+								JOptionPane.showMessageDialog(null, "Invalid username/password");
 							}
 						}
 					}
