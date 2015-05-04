@@ -102,12 +102,12 @@ public class DatabaseSearchBySerialAll extends JPanel{
 				if(SensorDatabaseAccess.checkIfADCPCurrentDataExists(instrument, selectedSerial)){
 					outputDisplay.setText("");
 					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(instrument)){
-						outputDisplay.append(item);
+						outputDisplay.append(item + " ");
 					}
 					outputDisplay.append("\n");
 					for(ArrayList<String> touples: SensorDatabaseAccess.toListSensorReadingByInstrumentSerial(instrument, selectedSerial)){
 						for(String item : touples){
-							outputDisplay.append(item);
+							outputDisplay.append(item + " ");
 						}
 						outputDisplay.append("\n");
 					}

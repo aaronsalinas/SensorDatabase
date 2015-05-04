@@ -131,6 +131,14 @@ public class Driver{
 		JMenu instrumentSearchMenu = new JMenu("Instrument by...");
 		
 		JMenuItem instrumentCurrentDataItem = new JMenuItem("Current Data");
+		instrumentCurrentDataItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent actionEvent) {
+			    initPanel.removeAll();
+			    myFrame.add(new DatabaseSearchByInstrumentCurrent());
+			    myFrame.revalidate();
+			    myFrame.repaint();
+		    }
+		});
 		instrumentSearchMenu.add(instrumentCurrentDataItem);
 		
 		JMenuItem instrumentAllDataItem = new JMenuItem("All Data");

@@ -14,11 +14,11 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
 
 
-public class DatabaseSearchBySerialCurrent extends JPanel{
+public class DatabaseSearchByInstrumentCurrent extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 
-	public DatabaseSearchBySerialCurrent(){
+	public DatabaseSearchByInstrumentCurrent(){
 		init();
 	}
 	
@@ -27,8 +27,6 @@ public class DatabaseSearchBySerialCurrent extends JPanel{
 		setLayout(new GridBagLayout());
 		setBorder(new TitledBorder("Select Instrument/Serial"));
 		allInstruments = new ArrayList<String>();
-		allSerials = new ArrayList<String>();
-		serialLabel = new JLabel("Serial #'s");
 		
 		myConstraints = new GridBagConstraints();
 		addScrollPane();
@@ -51,7 +49,6 @@ public class DatabaseSearchBySerialCurrent extends JPanel{
 
 		//Initialize the "instrumentDropDown" JComboBox  
 		instrumentDropDown = new JComboBox<String>();
-		serialDropDown = new JComboBox<String>();
 
 		//Populate the JComboBox with all members of the "instrumentList"
 		for(int i = 0; i < allInstruments.size(); i++){
@@ -65,56 +62,21 @@ public class DatabaseSearchBySerialCurrent extends JPanel{
 			public void actionPerformed(ActionEvent e){
 				//Set "selectedInstrument" to the item selected by the user
 				String selectedInstrument = (String) instrumentDropDown.getSelectedItem();
-				//Initialize the "serialDropDown" JComboBox
-				initSerialDropDown(selectedInstrument);
+				outputDisplay.setText("");
+				for(String item : SensorDatabaseAccess.toListADCPTableAttributes(selectedInstrument)){
+					outputDisplay.append(item + " ");
+				}
+				outputDisplay.append("\n");
+				for(ArrayList<String> touples : SensorDatabaseAccess.toListADCPCurrentDataInstr(selectedInstrument)){
+					for(String item : touples){
+						outputDisplay.append(item + " ");
+					}
+					outputDisplay.append("\n");
+				}
 			}
 		});
 	}
 	
-	private void initSerialDropDown(String instrument){
-		myConstraints.weightx = 0.5;
-		myConstraints.gridy = 0;
-		myConstraints.gridx = 1;
-		add(serialLabel, myConstraints);
-		myConstraints.gridy++;
-		
-		allSerials.clear();
-		serialDropDown.removeAllItems();
-		
-		for(String item : SensorDatabaseAccess.toListSerialsByInstrument(instrument)){
-			allSerials.add(item);
-		}
-		
-		for(String item : allSerials){
-			serialDropDown.addItem(item);
-		}
-		
-		add(serialDropDown, myConstraints);
-		
-		revalidate();
-		repaint();
-		
-		//Add an ActionListener to the "serialDropDown"
-		serialDropDown.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				//sets "selectedSerial" to the item selected by the user
-				String selectedSerial = (String) serialDropDown.getSelectedItem();
-				if(SensorDatabaseAccess.checkIfADCPCurrentDataExists(instrument, selectedSerial)){
-					outputDisplay.setText("");
-					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(instrument)){
-						outputDisplay.append(item + " ");
-					}
-					outputDisplay.append("\n");
-					for(String item : SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(instrument, selectedSerial)){
-						outputDisplay.append(item + " ");
-					}
-				}
-				else {
-					outputDisplay.setText("No data for current selection");
-				}
-			}
-		});
-	}
 	
 	
 	/**************************************************************************
@@ -148,11 +110,8 @@ public class DatabaseSearchBySerialCurrent extends JPanel{
 	
 	private JTextArea outputDisplay;
 	private JScrollPane scrollingDisplay;
-	private JLabel serialLabel;
 	private JComboBox<String> instrumentDropDown;
-	private JComboBox<String> serialDropDown;
 	
 	private GridBagConstraints myConstraints;
 	private ArrayList<String> allInstruments;
-	private ArrayList<String> allSerials;
 }
