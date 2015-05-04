@@ -135,13 +135,13 @@ public class DatabaseSearchBySerialCurrent extends JPanel{
 		//it so it cannot be edited by the user.
 		outputDisplay = new JTextArea();
 		outputDisplay.setEditable(false);
-		outputDisplay.setPreferredSize(new Dimension(580,500));
 		
 		//Instantiate our JScrollPane, setting the vertical and horizontal 
 		//scroll bars to appear as needed, as well as setting the bounds
 		scrollingDisplay = new JScrollPane(outputDisplay);
 		scrollingDisplay.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollingDisplay.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollingDisplay.setPreferredSize(new Dimension(580,450));
 		//Add the JScrollPane to the panel
 		add(scrollingDisplay,myConstraints);
 	}
