@@ -1,3 +1,10 @@
+/******************************************************************************
+ * Filename: DatabaseSearchByInstrumentAll.java
+ * Author: Dylan Clohessy (Dylan_Clohessy@baylor.edu)
+ * Description: The driver file for the project. 
+ * Created: 4/28/2015
+ * Modified:4/30/2015
+******************************************************************************/
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

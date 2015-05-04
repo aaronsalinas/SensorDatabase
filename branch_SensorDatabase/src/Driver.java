@@ -27,25 +27,37 @@ public class Driver{
 		new Driver();
 	}
 	
+	//Public constructor for the Driver
 	public Driver(){
+		//Make a new JFrame which Exits upon closing
 		myFrame = new JFrame();
 		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//Depending on whether or not we can connect to the database, name it
 		if(Database.checkIfDatabaseConnect()){
 			myFrame.setTitle("Database:Connected");
 		}
 		else{
 			myFrame.setTitle("Database:Disconnected");
 		}
+		//Set the initial value of loggedIn to false
 		loggedIn = false;
+		//Create a new Login
 		loginScreen = new Login();
-		
+		//cerate a new MenuBar
 		myMenuBar = new JMenuBar();
 		
+		//Initialize the Login Menu
 		initLoginMenu();
+		//Initialize the Search Menu
 		initSearchMenu();
+		//Initialize the Admin Menu
 		initAdminMenu();
+		//Boot up the welcome screen
         welcomeScreen();
 		
+        //Set the frame's menu bar, set it to visible and focusable, and set it's size
+        //and place it in the middle of the screen
 		myFrame.setJMenuBar(myMenuBar);
 		myFrame.setFocusable(true);
 		myFrame.setVisible(true);
@@ -54,30 +66,34 @@ public class Driver{
 
 	}
 	
+	//Function that initializes the Admin Menu
 	private void initAdminMenu(){
+		//Create a new Menu
 		JMenu adminMenu = new JMenu("User");
 		
+		//Make an addFile menu item
 		JMenuItem addFile = new JMenuItem("Add data file...");
+		//Add an actionListener to the menu item
 		addFile.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent actionEvent) {
 		    	//Get the current loggedIn status
 		    	loggedIn = loginScreen.isLoggedIn();
-		    	//If the user is not logged in, allow them to log in
+		    	//If the user is logged in, pull up the file searcher
 		    	if(loggedIn){
 		    		new AdminAddFile();
-			    	//Re-validate and repaint the JFrame
-			    	myFrame.revalidate();
-			    	myFrame.repaint();
 		    	}
-		    	//If the user is already logged in, tell them
+		    	//If the user is not logged in, tell them
 		    	else{
 		    		JOptionPane.showMessageDialog(null, "Must log in to load data file");
 		    	}
 		    }
 		});
+		//add the menu item to the menu
 		adminMenu.add(addFile);
 		
+		//Menu item for changing passwords
 		JMenuItem changePassword = new JMenuItem("Change password");
+		//Add an actionlistener to the menu item
 		changePassword.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent actionEvent) {
 		    	//Get the current loggedIn status
@@ -91,54 +107,65 @@ public class Driver{
 			    	myFrame.revalidate();
 			    	myFrame.repaint();
 		    	}
-		    	//If the user is not already logged in, tell them
+		    	//If the user is not logged in, tell them
 		    	else{
 		    		JOptionPane.showMessageDialog(null, "Must log in to change passwords");
 		    	}
 		    }
 		});
+		//add the menu item to the menu
 		adminMenu.add(changePassword);
 		
+		//add the menu to the menu bar
 		myMenuBar.add(adminMenu);
 	}
 	
+	//Initialize the search menu
 	private void initSearchMenu(){
-		
+		//Make a search menu 
 		JMenu searchMenu = new JMenu("Search...");
-		
+		//Make a serial submenu
 		JMenu serialSearchMenu = new JMenu("Serial by...");
-		
+		//Make a current data menu item 
 		JMenuItem serialCurrentDataItem = new JMenuItem("Current Data");
 		serialCurrentDataItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent actionEvent) {
 			    initPanel.removeAll();
+			    //If pressed, call a new instance of the appropriate class
 			    myFrame.add(new DatabaseSearchBySerialCurrent());
 			    myFrame.revalidate();
 			    myFrame.repaint();
 		    }
 		});
+		//add item to submenu
 		serialSearchMenu.add(serialCurrentDataItem);
 		
+		//item for all data
 		JMenuItem serialAllDataItem = new JMenuItem("All Data");
 		serialAllDataItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent actionEvent) {
 			    initPanel.removeAll();
+			  //If pressed, call a new instance of the appropriate class
 			    myFrame.add(new DatabaseSearchBySerialAll());
 			    myFrame.revalidate();
 			    myFrame.repaint();
 		    }
 		});
+		//add to sub menu
 		serialSearchMenu.add(serialAllDataItem);
 		
+		//item for time frame
 		JMenuItem serialTimeframeItem = new JMenuItem("Timeframe");
 		serialTimeframeItem.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent actionEvent) {
 			    initPanel.removeAll();
+			    //If pressed, call a new instance of the appropriate class
 			    myFrame.add(new DatabaseSearchBySerialTime());
 			    myFrame.revalidate();
 			    myFrame.repaint();
 		    }
 		});
+		//add to submenu
 		serialSearchMenu.add(serialTimeframeItem);
 		
 		JMenu instrumentSearchMenu = new JMenu("Instrument by...");
