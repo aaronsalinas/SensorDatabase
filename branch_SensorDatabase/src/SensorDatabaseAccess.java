@@ -15,12 +15,21 @@ public class SensorDatabaseAccess extends Database{
 	 * 								Create Functions
 	 *************************************************************************/
 	
-	static public boolean createInstrumentSensorReadingTable(String instrument, String serial, ArrayList<Pair<String, String> > attrDataTypeList){
+	/**
+	 * This function creates a table that stores readings for a given instrument if one does not already exist
+	 * 
+	 * @param instrument - name of the instrument
+	 * @param serial
+	 * @param attrDataTypeList
+	 * @return <b>true</b> - successfully created table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
+	static public boolean createInstrumentSensorReadingTable(String instrument, ArrayList<Pair<String, String> > attrDataTypeList){
 		boolean success = false;
 		
-		if(!checkIfSensorReadingTableExists(instrument) && checkIfInstrumentSerialExists(instrument, serial)){
+		if(!checkIfSensorReadingTableExists(instrument)){
 			
-			success = createInstrumentSensorReadingTableQuery(instrument, serial, attrDataTypeList);
+			success = createInstrumentSensorReadingTableQuery(instrument, attrDataTypeList);
 			
 			if(!success) System.out.println("ERROR: Sensor Reading Table For " + instrument + " Not Created In Database!");
 		}
@@ -28,6 +37,14 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function calls a query function which creates a table in the database to store
+	 * current information for a given instrument type
+	 * @param instrument - name of the instrument
+	 * @param ADCPAttrDataType - the columns of the table and their corresponding type
+	 * @return <b>true</b> - successful table creation<br>
+	 * 		   <b>false</b> - unsuccessful table creation/failure in query
+	 */
 	static public boolean createADCPCurrentTable(String instrument,
 												ArrayList<Pair<String, String> > ADCPAttrDataType){
 		boolean success = false;
@@ -52,18 +69,17 @@ public class SensorDatabaseAccess extends Database{
 	 * This function calls a query function which adds a new instrument into the
 	 * database.
 	 * @author Aaron D. Salinas
-	 * @param instrument
-	 * @return
+	 * @param instrument - name of the instrument to be added to table
+	 * @return <b>true</b> - successfully added into database<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
 	 */
 	static public boolean addInstrument(String instrument){
 		boolean success = false; //Assume failure
 		
 		//Check if instrument already exists in the database
-		if(checkIfInstrumentExists(instrument) == false){
+		if(!checkIfInstrumentExists(instrument)){
 			//Add instrument into the database
-			if(addInstrumentQuery(instrument)){
-				success = true;
-			}
+			success = addInstrumentQuery(instrument);
 		}
 		else{
 			System.err.println("Error: Instrument Already Exists In Database!");
@@ -81,9 +97,11 @@ public class SensorDatabaseAccess extends Database{
 	 * the database
 	 * @param instrument
 	 * @param serial
+	 * @return <b>true</b> - successful added instrument/serial into database<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
 	 */
 	static public boolean addInstrumentSerial(String instrument, String serial){
-		boolean success = false; //Assume Failue
+		boolean success = false; //Assume Failure
 		
 		if(!checkIfInstrumentExists(instrument)){
 			System.err.println("ERROR: Instrument Not Stored in Database");
@@ -92,7 +110,7 @@ public class SensorDatabaseAccess extends Database{
 		else{
 			//Add into database if it doesn't already exist
 			if(checkIfInstrumentSerialExists(instrument, serial) == false)
-				if(addInstrumentSerialQuery(instrument, serial)){//call query to add instr/serial
+				if(addInstrumentSerialQuery(instrument, serial)){//call query to add instrument/serial
 					success = true;
 				}
 		}
@@ -103,6 +121,16 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function adds a tuple in the corresponding ADCPCurrent table if one 
+	 * does not already exist in the table.
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of instrument
+	 * @param timeStamp - time stamp of read
+	 * @param ADCPAttrVal - corresponding list of values for the read
+	 * @return <b>true</b> - successfully inserted tuple into table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
 	static public boolean addADCPCurrentData(String instrument, String serial, String timeStamp, 
 											ArrayList<Pair<String, String> > ADCPAttrVal){
 		boolean success = false;
@@ -121,6 +149,15 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function adds a reading into the corresponding table storing sensor readings for a
+	 * instrument
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param sensorReadings - list storing all the sensor reads for the instrument/serial number
+	 * @param addedReadings - readings which have been successfully added into the database
+	 * @return
+	 */
 	static public boolean addSensorReadings(String instrument, String serial, 
 			ArrayList<ArrayList<Pair<String, String> > > sensorReadings, ArrayList<ArrayList<Pair<String,String> > > addedReadings){
 		boolean success = false;
@@ -138,12 +175,32 @@ public class SensorDatabaseAccess extends Database{
 	}
 	
 	/**
-	 * This function invokes a query call to update a ADCP given the corresponding instrument
-	 * @param instrument
-	 * @param serial
-	 * @param timeStamp
-	 * @param attrValList
-	 * @return
+	 * This function calls a query function which adds a data type unit into the table
+	 * storing attributes and their corresponding data types
+	 * @param attribute - name of the attribute. e.g. "Pressure", "Volume"
+	 * @param dataType - unit type of attribute. e.g. "MPa", "M"
+	 * @return <b>true</b> - successfully inserted tuple into table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
+	static public boolean addDataUnitsType(String attribute, String dataType){
+		boolean success = false; //Assume Failure
+		
+		//Check if tuple exists already for tuple to be created
+		if(!checkIfDataUnitsTypeExists(attribute, dataType)){
+			success = addDataUnitsTypeQuery(attribute, dataType);
+		}
+		
+		return success;
+	}
+	
+	/**
+	 * This function invokes a query call to update an ADCP given the corresponding instrument
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param timeStamp - time of reading of the instrument for the corresponding data
+	 * @param attrValList - list storing readings for the corresponding instrument/serial 
+	 * @return <b>true</b> - successfully updated tuple into table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
 	 */
 	static public boolean updateADCPCurrentData(String instrument, String serial, String timeStamp,
 												ArrayList<Pair<String, String> > attrValList){
@@ -157,12 +214,10 @@ public class SensorDatabaseAccess extends Database{
 																+ serial + "Not Added to Database");
 		}
 		else{
-			if(checkIfADCPCurrentDataNewer(instrument, serial, timeStamp)){
-				success = updateADCPCurrentDataQuery(instrument, serial, attrValList);
-				if(!success) System.out.println("ERROR: ADCP Current Data For " + instrument + " "
-												+ serial + "Not Updated!");
-			}
-			
+
+			success = updateADCPCurrentDataQuery(instrument, serial, attrValList);
+			if(!success) System.out.println("ERROR: ADCP Current Data For " + instrument + " "
+											+ serial + "Not Updated!");	
 		}
 		
 		
@@ -173,6 +228,15 @@ public class SensorDatabaseAccess extends Database{
 	 * 								Remove Functions
 	 *************************************************************************/
 	
+	/**
+	 * This function removes a tuple from a ADCPCurrent table for the corresponding 
+	 * instrument
+	 * 
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @return <b>true</b> - successfully removed tuple from table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
 	static public boolean removeADCPCurrentData(String instrument, String serial){
 		boolean success = false;
 		
@@ -184,13 +248,31 @@ public class SensorDatabaseAccess extends Database{
 	}
 	
 	/**
+	 * This function removes a tuple from the DataUnits table
+	 * @param attribute - name of the attribute in the table
+	 * @param dataType - DataType of the attribute
+	 * @return <b>true</b> - successfully deleted tuple from table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
+	static public boolean removeDataUnitsType(String attribute, String dataType){
+		boolean success = false;
+		
+		if(checkIfDataUnitsTypeExists(attribute, dataType)){
+			success = removeDataUnitsTypeQuery(attribute, dataType);
+		}
+		
+		return success;
+	}
+	
+	/**
 	 *  removeInstrument
 	 * <p>
-	 * This function calls a query function which removes a instrument whose name 
-	 * is passed into the function
+	 * This function calls a query function which removes a instrument from the 
+	 * Instrument table
 	 * @author Aaron D. Salinas
-	 * @param instrument
-	 * @return
+	 * @param instrument - name of the instrument
+	 * @return <b>true</b> - successfully deleted tuple from table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
 	 */
 	static public boolean removeInstrument(String instrument){
 		boolean success = false; //assume failure
@@ -208,9 +290,10 @@ public class SensorDatabaseAccess extends Database{
 	 * This function removes a tuple from the InstrumentSerial table in the database.
 	 * The instrument and serial values are passed into the function. Returns true 
 	 * if the tuple is successfully removed, otherwise returns false
-	 * @param instrument
-	 * @param serial
-	 * @return
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @return <b>true</b> - successfully deleted tuple from table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
 	 */
 	static public boolean removeInstrumentSerial(String instrument, String serial){
 		boolean success = false; //Assume failure
@@ -224,6 +307,15 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function removes a sensor reading from its corresponding instrument sensor
+	 * readings table
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param readings - information of tuples to be deleted
+	 * @return <b>true</b> - successfully deleted all tuple from table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
 	static public boolean removeSensorReadings(String instrument, String serial, ArrayList<ArrayList<Pair<String, String> > > readings){
 		boolean success = false;
 		
@@ -237,6 +329,12 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function drops a ADCP table from the database
+	 * @param instrument - name of the instrument whose ADCPCurrent table is to be droped
+	 * @return <b>true</b> - successfully dropped table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
 	static public boolean dropADCPCurrentTable(String instrument){
 		String query = "DROP TABLE `ADCPCurrentData_" + instrument + "`";
 		boolean success = false;
@@ -249,6 +347,12 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function drops a sensor reading table from the database
+	 * @param instrument - name of instrument whose sensor reading table is to be dropped from database
+	 * @return <b>true</b> - successfully dropped table<br>
+	 * 		   <b>false</b> - unsuccessful/failure in query
+	 */
 	static public boolean dropSensorReadingTable(String instrument){
 		String query = "DROP TABLE `SensorReading_" + instrument + "`";
 		boolean success = false;
@@ -270,14 +374,20 @@ public class SensorDatabaseAccess extends Database{
 	 * of the sensors stored in the database. This function calls a query function
 	 * to retrieve information from the database
 	 * @author Aaron D. Salinas
+	 * @return list of instruments stored in the database
 	 */
-	static public List<String> toListAllInstruments(){
-		ArrayList<String> instrList = new ArrayList<String>();
+	static public ArrayList<String> toListAllInstruments(){
+		ArrayList<ArrayList<String> > tempList = new ArrayList<ArrayList<String> > ();
 		String query = "SELECT * FROM Instrument;";
 		
-		if(toListTuples(query, instrList) == false){
+		if(toListTuples(query, tempList) == false){
 			System.err.println("Error in retriving information.");
 		}
+		//Concatenate the results into one list
+		ArrayList<String> instrList = new ArrayList<String>();
+		for(int i = 0; i < tempList.size(); i++){
+			instrList.add(tempList.get(i).get(0));
+		}	
 		
 		return instrList;
 	}
@@ -289,32 +399,228 @@ public class SensorDatabaseAccess extends Database{
 	 * InstrumentSerial table in the database. Result set returned as a 
 	 * list of strings, each string pertaining to one tuple.
 	 * @author Aaron D. Salinas
-	 * @return
+	 * @return list of all instruments and serial numbers stored in the database
 	 */
-	static public List<String> toListAllInstrumentSerials(){
-		ArrayList<String> instrSerialList = new ArrayList<String>();
+	static public ArrayList<ArrayList<String>> toListAllInstrumentSerials(){
+		ArrayList<ArrayList<String> > tempList = new ArrayList<ArrayList<String> >();
 		String query = "SELECT * FROM InstrumentSerial";
 		
-		if(toListTuples(query, instrSerialList) == false){
+		if(toListTuples(query, tempList) == false){
 			System.err.println("Error in retrieving information");
 		}
-		
-		
-		return instrSerialList;
+
+		return tempList;
 	}
 	
-	static public ArrayList<String> toListADCPCurrentData(String instrument, String serial){
+	/**
+	 * This function calls a query which returns all serial numbers stored in the database
+	 * for a given instrument
+	 * @param instrument - name of the instrument
+	 * @return List of serial numbers for a given instrument
+	 */
+	static public ArrayList<String> toListSerialsByInstrument(String instrument){
+		ArrayList<String> serials = new ArrayList<String>();
+		ArrayList<ArrayList<String>> tempList = new ArrayList<ArrayList<String> >();
+		String query = "SELECT `Serial Number` FROM `InstrumentSerial` "
+				+ "WHERE `Instrument`=\'" + instrument + "\'";
 		
+		if(toListTuples(query, tempList) == false){
+			System.err.println("Error in retrieving information");
+		}else{
+			for(int i = 0; i < tempList.size(); i++){
+				serials.add(tempList.get(i).get(0));
+			}
+		}
+		
+		return serials;
+	}
+	
+	/**
+	 * This function calls a query which returns the ADCPCurrent data for a given instrument
+	 * and serial number combination
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @return List storing the information of the tuples in the database
+	 */
+	static public ArrayList<String> toListADCPCurrentDataInstrSerial(String instrument, String serial){
+		
+		ArrayList<ArrayList<String> >tempList = new ArrayList<ArrayList<String> >();
 		ArrayList<String> ADCPCurTuple = new ArrayList<String>();
-		
+ 		
 		String query = "SELECT * FROM `ADCPCurrentData_" + instrument + "` WHERE ";
 		query = query + "`Instrument` = \'" + instrument +"\' AND `Serial Number` = \'" + serial + "\'";
 		
-		if(toListTuples(query, ADCPCurTuple) == false){
+		if(toListTuples(query, tempList) == false){
 			System.err.println("Error in retrieving information");
+		}else{
+			//Store result set in one list from big list of list
+			for(int i = 0; i < tempList.get(0).size(); i++){
+				ADCPCurTuple.add(tempList.get(0).get(i));
+			}
 		}
 		
 		return ADCPCurTuple;
+	}
+	
+	/**
+	 * This function returns the column names of a corresponding CurrentData table given
+	 * the name of an instrument
+	 * @param instrument - name of instrument
+	 * @return List storing the name of columns in the corresponding table
+	 */
+	static public ArrayList<String> toListADCPTableAttributes(String instrument){
+		ArrayList<String> colNames = new ArrayList<String>();
+		String tableName = "ADCPCurrentData_" + instrument;	
+		
+		return toListTableAttributes(tableName, colNames);
+	}
+
+	/**
+	 * This function returns all list storing the ADCPCurrent data of all serial numbers 
+	 * for a given instrument
+	 * @param instrument - name of the instrument
+	 * @return List storing all ADCPCurrent data of all serial numbers for a instrument
+	 */
+	static public ArrayList<ArrayList<String> > toListADCPCurrentDataInstr(String instrument){
+		ArrayList<ArrayList<String> > ADCPCurTuple = new ArrayList<ArrayList<String> >();
+		String query = "SELECT * FROM `ADCPCurrentData_" + instrument + "` WHERE ";
+		query = query + "`Instrument` = \'" + instrument + "\'";
+		
+		if(toListTuples(query, ADCPCurTuple) == false){
+			System.err.println("Error in retrieving information");
+		}else{
+			
+		}
+		return ADCPCurTuple;
+	}
+	
+	/**
+	 * This function returns a list of all sensor readings of all serial numbers of a given
+	 * instrument
+	 * @param instrument - name of the instrument
+	 * @return ArrayList -  storing sensor readings
+	 */
+	static public ArrayList<ArrayList<String> > toListSensorReadingByInstrument(String instrument){
+		ArrayList<ArrayList<String> > readings = new ArrayList<ArrayList<String> >();
+		String query = "SELECT * FROM `SensorReading_" + instrument + "`"
+						+ " WHERE `Instrument`=\'" + instrument + "\'";
+		
+		if(toListTuples(query, readings) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return readings;
+	}
+	
+	/**
+	 * This function returns a list of all sensor readings for a given instrument/serial number combination
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @return List of sensor Readings
+	 */
+	static public ArrayList<ArrayList<String> > toListSensorReadingByInstrumentSerial(String instrument, String serial){
+		ArrayList<ArrayList<String> > readings = new ArrayList<ArrayList<String> >();
+		
+		String query = "SELECT * FROM `SensorReading_" + instrument + "`"
+				+ " WHERE `Instrument`=\'" + instrument + "\' AND" 
+				+ " `Serial Number`=\'" + serial + "\'";
+
+		if(toListTuples(query, readings) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return readings;
+	}
+	
+	/**
+	 * This function returns a list of sensor readings given an instrument, serial number, and time frame.
+	 * Instrument type MUST be specified, other variables may be initialized to "*" to specify a wildcard
+	 * 
+	 * <p>
+	 * "*" can be passed into the function for a serial to specify any serial number
+	 * <p>
+	 * "*" can be passed into the function as a start or end time specifying not to include a start/end time
+	 * constraint, respectively
+	 * @param instrument - name of the instrument; "*" specifies any instrument
+	 * @param serial - serial number of the instrument; "*" specifies any serial number
+	 * @param startTime - being time frame of readings; "*" specifies no start time
+	 * @param endTime - end time frame of readings; "*" specifies no end time
+	 * @return
+	 */
+	static public ArrayList<ArrayList<String> > toListSensorReadingByInstrumentSerialTime(String instrument, String serial, 
+													String startTime, String endTime){
+		ArrayList<ArrayList<String> > readings = new ArrayList<ArrayList<String> >();
+		
+		String query = "SELECT * FROM `SensorReading_" + instrument + "`";
+		
+		if(!instrument.matches("\\*") || !serial.matches("\\*") || !startTime.matches("\\*") || !endTime.matches("\\*")){
+			boolean addAnd = false;
+			query = query + " WHERE";
+			
+			//Check if instrument is specified
+			if(!instrument.matches("\\*")){
+				query = query + " `Instrument`=\'" + instrument + "\'";
+				addAnd = true;
+			}
+			
+			//Check if serial number is specified
+			if(!serial.matches("\\*")){
+				if(addAnd) query = query + " AND";
+				query = query + " `Serial Number`=\'" + serial + "\'";
+				addAnd = true;
+			}
+			//Check if start time is set, "*" represents any start
+			if(!startTime.matches("\\*")){
+				if(addAnd) query = query + " AND";
+				query = query + " `ReadTime`>='" + startTime + "\'";
+				addAnd = true;
+			}
+			//Check if end time is set, "*" represents any start
+			if(endTime.matches("\\*") == false){
+				if(addAnd) query = query + " AND";
+				query = query + " `ReadTime`<='" + endTime + "\'";
+			}
+		}
+				
+		//Call query function to store all the readings
+		if(toListTuples(query, readings) == false){
+			System.err.println("Error in retrieving information");
+		}
+		
+		return readings; //return result set
+	}
+	
+	/**
+	 * This function returns the result set of sensor readings stored for a given instrument
+	 * @param instrument
+	 * @return
+	 */
+	static public ArrayList<String> toListSensorReadingAttributes(String instrument){
+		ArrayList<String> colNames = new ArrayList<String>();
+		String tableName = "SensorReading_" + instrument;	
+		
+		return toListTableAttributes(tableName, colNames); //return sensor readings for instrument
+	}
+	
+	/**
+	 * This function returns the unit type stored for any given attribute.
+	 * E.g. "MPa" for attribute "Pressure"; "GMT" for attribute "Datetime"
+	 * @param attribute - name of attribute
+	 * @return unit type of attribute
+	 */
+	static public String toStringAttributeUnit(String attribute){
+		String unit = "";
+		ArrayList<ArrayList<String> > tempList = new ArrayList<ArrayList<String> > ();
+		String query = "SELECT `Unit` FROM `DataUnits` WHERE `Attribute`=\'" + attribute + "\'";
+		
+		if(!toListTuples(query, tempList)){
+			System.err.println("Error in retrieving information");
+		}
+		else{
+			unit = tempList.get(0).get(0);
+		}
+		
+		return unit;
 	}
 	
 	/**
@@ -345,13 +651,15 @@ public class SensorDatabaseAccess extends Database{
 	 * @return
 	 */
 	static public boolean checkIfInstrumentSerialExists(String instrument, String serial){
-		boolean exists = false;
-		
-		exists = checkIfInstrumentSerialExistsQuery(instrument, serial);
-		
-		return exists;
+		return checkIfInstrumentSerialExistsQuery(instrument, serial);
 	}
 	
+	/**
+	 * This function checks if a ADCP Current exists for a given instrument
+	 * @param instrument - name of instrument
+	 * @return <b>true</b> - if table exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static public boolean checkIfADCPCurrentTableExists(String instrument){
 		boolean exists = false;
 		
@@ -360,6 +668,14 @@ public class SensorDatabaseAccess extends Database{
 		return exists;
 	}
 	
+	/**
+	 * This function checks if a ADCPCurrent reading exists in the table for 
+	 * a given instrument/serial number combination
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static public boolean checkIfADCPCurrentDataExists(String instrument, String serial){
 		boolean exists = false;
 		
@@ -369,29 +685,51 @@ public class SensorDatabaseAccess extends Database{
 		
 	}
 	
-	static public boolean checkIfADCPCurrentDataNewer(String instrument, String serial, String timeStamp){
-		boolean newer = false;
-		
-		newer = checkIfADCPCurrentDataNewerQuery(instrument, serial, timeStamp);
-				
-		return newer;
+	/**
+	 * This function checks if a ADCPCurrent reading passed in newer than the one already stored
+	 * in the database for a given instrument/serial number combination
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param timeStamp - timeStamp associated with the reading passed in
+	 * @return <b>true</b> - if reading passed in is newer exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static public boolean checkIfADCPCurrentDataNewer(String instrument, String serial, String timeStamp){		
+		return checkIfADCPCurrentDataNewerQuery(instrument, serial, timeStamp);
 	}
 	
-	static public boolean checkIfSensorReadingTableExists(String instrument){
-		boolean exists = false;
-		
-		exists = checkIfSensorReadingTableExistsQuery(instrument);
-		
-		return exists;
+	/**
+	 * This function checks if a attribute is already stored in the DataTypes table in the database
+	 * @param attribute - name of th attribute
+	 * @param dataType - unit associated with the datatype
+	 * @return <b>true</b> - if in table <br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static public boolean checkIfDataUnitsTypeExists(String attribute, String dataType){
+		return checkIfDataUnitsTypeExistsQuery(attribute);
 	}
 	
+	/**
+	 * This function checks if a sensorReading table for a given instrument exists in the system
+	 * @param instrument - name of the instrument
+	 * @return <b>true</b> - if table exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static public boolean checkIfSensorReadingTableExists(String instrument){		
+		return checkIfSensorReadingTableExistsQuery(instrument);
+	}
 	
-	static public boolean checkIfSensorReadingExists(String instrument, String serial, String timeStamp){
-		boolean exists = false;
-		
-		exists = checkIfSensorReadingExistsQuery(instrument, serial, timeStamp);
-		
-		return exists;
+	/**
+	 * This function checks if a sensorReading stored in an instruments sensorReading table
+	 * exists
+	 * @param instrument- name of the instrument
+	 * @param serial - serial number associated with the instrument
+	 * @param timeStamp - time stamp assocaited with the reading time
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static public boolean checkIfSensorReadingExists(String instrument, String serial, String timeStamp){		
+		return checkIfSensorReadingExistsQuery(instrument, serial, timeStamp);
 	}
 
 	/* ************************************************************************ 
@@ -443,6 +781,30 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function calls a query function which adds a new data unit type into the 
+	 * data unit table
+	 * @param attribute - name of the attribute
+	 * @param dataType - unit type of attribute
+	 * @return <b>true</b> - if added<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean addDataUnitsTypeQuery(String attribute, String dataType){
+		String query = "INSERT INTO `DataUnits` (`Attribute`, `Unit`) VALUES("
+					 + "\'" + attribute + "\',\'" + dataType + "\')";
+		return insertIntoTable(query); //Attempt to successfully run query, return result 
+	}
+	
+	/**
+	 * This function adds a new ADCPCurrent tuple into the corresponding ADCPCurrent
+	 * table for a specified instrument
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param timeStamp - time associated with read
+	 * @param attrValList - column values of the row to be added
+	 * @return <b>true</b> - if added<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean addADCPCurrentDataQuery(String instrument, String serial,
 													String timeStamp, ArrayList<Pair<String, String> > attrValList){
 		boolean success = true; //assume success;
@@ -472,6 +834,16 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 
+	/**
+	 * This function adds a sensor reading into the corresponding table for a specified
+	 * instrument
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of instrument 
+	 * @param sensorReadings - list of sensor readings to be added
+	 * @param addedReadings - number of sensor readings successfully added into database
+	 * @return <b>true</b> - if all added<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean addSensorReadingsQuery(String instrument, String serial, 
 		ArrayList<ArrayList<Pair<String, String> > > sensorReadings, ArrayList<ArrayList<Pair<String,String> > > addedReadings){
 		boolean success = true; //Assume all good reads, If error occurs then the flag will be set to false;
@@ -505,7 +877,15 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 
-	private static boolean createADCPCurrentTableQuery(String instrument,
+	/**
+	 * This function calls a query to add a new ADCPCurrent table for a specified instrument
+	 * into the database
+	 * @param instrument - name of the instrument
+	 * @param ADCPAttrDataType - column attributes of the table
+	 * @return <b>true</b> - if table created<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean createADCPCurrentTableQuery(String instrument,
 			ArrayList<Pair<String, String>> ADCPAttrDataType) {
 		
 		boolean success = true; //assume success;
@@ -532,7 +912,15 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
-	private static boolean createInstrumentSensorReadingTableQuery(String instrument, String serial, List<Pair<String, String> > attrDataTypeList){
+	/**
+	 * This function calls a query function to create a new Sensor Reading table for a 
+	 * specified instrument
+	 * @param instrument - name of the instrument
+	 * @param attrDataTypeList - column attributes of the table
+	 * @return <b>true</b> - if table created<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean createInstrumentSensorReadingTableQuery(String instrument, List<Pair<String, String> > attrDataTypeList){
 		boolean success = false;
 		
 		String query = "CREATE TABLE IF NOT EXISTS `SensorReading_" + instrument 
@@ -558,7 +946,16 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
-	static private boolean updateADCPCurrentDataQuery(String instrument, String serial, ArrayList<Pair<String, String> > attrVal){
+	/**
+	 * This function calls a query to update a existing for in a ADCPCurrent table for a specified instrument/serial number
+	 * combination
+	 * @param instrument - name of the instrument 
+	 * @param serial - serial number of the instrument
+	 * @param attrVal - column values to be updated to
+	 * @return <b>true</b> - if tuple updated<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean updateADCPCurrentDataQuery(String instrument, String serial, ArrayList<Pair<String, String> > attrVal){		
 		boolean success = true; //assume success;
 		//Connect to database
 		Connection myConn = null;
@@ -599,7 +996,6 @@ public class SensorDatabaseAccess extends Database{
 			}
 			
 			query = query + " WHERE `Instrument`=\'" + instrument + "\' AND `Serial Number`=\'" + serial + "\'";
-								
 			myRs = myStmt.executeUpdate(query); //Execute Query (add new ADCP current reading for instrument)			
 		}
 		catch(SQLException exc){
@@ -617,6 +1013,14 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function removes a tuple from a ADCPCurrent table for a specified instrument/serial number
+	 * combination
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @return <b>true</b> - if tuple removed<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean removeADCPCurrentDataQuery(String instrument, String serial){
 		boolean success = false;
 		
@@ -624,9 +1028,25 @@ public class SensorDatabaseAccess extends Database{
 		String query = "DELETE FROM `" + tableName + "` WHERE `Instrument`=\'" + instrument
 					+ "\' AND `Serial Number`=\'" + serial + "\'";
 		
-		deleteFromTable(query); //Delete ADCPCurrent reading from table for instrument
+		success = deleteFromTable(query); //Delete ADCPCurrent reading from table for instrument
 		
 		return success;
+	}
+	
+	/**
+	 * This function removes a tuple from the DataUnits table given the column values of a row
+	 * in the table
+	 * @param attribute - name of attribute
+	 * @param dataType - unit type of attribute
+	 * @return <b>true</b> - if tuple removed<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean removeDataUnitsTypeQuery(String attribute, String dataType){
+		String query = "DELETE FROM `DataUnits`" 
+					 + " WHERE `Attribute`=\'" + attribute + "\' AND "
+					 + "`Unit`=\'" + dataType + "\'";
+		
+		return deleteFromTable(query);
 	}
 	
 	/**
@@ -735,6 +1155,14 @@ public class SensorDatabaseAccess extends Database{
 		return success;
 	}
 	
+	/**
+	 * This function calls a query to remove a sensor reading from an instruments sensor reading table
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param readings - column values of the row to be deleted
+	 * @return <b>true</b> - if tuple deleted<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean removeSensorReadingsQuery(String instrument, String serial, ArrayList<ArrayList<Pair<String, String> > > readings){
 		boolean success = false;
 		String tableName = "SensorReading_" + instrument;
@@ -860,15 +1288,26 @@ public class SensorDatabaseAccess extends Database{
 		return instrSerialExists;
 	}
 
+	/**
+	 * This function calls a query which checks if a ADCPCurrent table exists for a specified instrument
+	 * @param instrument - name of instrument
+	 * @return <b>true</b> - if table exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean checkIfADCPCurrentTableExistsQuery(String instrument){
-		boolean exists = false;
 		String tableName = "ADCPCurrentData_" + instrument;			
 		
-		exists = checkIfTableExists(tableName);
-				
-		return exists;
+		return checkIfTableExists(tableName);
 	}
 	
+	/**
+	 * This function calls a query which checks to see if a ADCPCurrentData tuple exists 
+	 * in the corresponding table for an instrument
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of instrument
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean checkIfADCPCurrentDataExistsQuery(String instrument, String serial){
 		boolean ADCPCurExists = false;
 		
@@ -914,6 +1353,15 @@ public class SensorDatabaseAccess extends Database{
 		return ADCPCurExists;
 	}
 	
+	/**
+	 * This function calls a query which checks if a ADCPCurrent reading passed into the function is 
+	 * newer then the one stored in the database
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number of the instrument
+	 * @param timeStamp - time stamp associated with the info passed into the function
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
 	static private boolean checkIfADCPCurrentDataNewerQuery(String instrument, String serial, String timeStamp){
 		boolean curNewer = false;
 		
@@ -962,31 +1410,54 @@ public class SensorDatabaseAccess extends Database{
 		return curNewer;
 	}
 	
-	static private boolean checkIfSensorReadingTableExistsQuery(String instrument){
-		boolean exists = false;
-		String tableName = "SensorReading_" + instrument;
+	/**
+	 * This function calls a query function which checks to see if a attribute
+	 * exists in the DataUnits table in the database
+	 * @param attribute - name of the attribute
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean checkIfDataUnitsTypeExistsQuery(String attribute){
+		String query = "SELECT COUNT(*) "
+					 + "FROM `DataUnits`"
+					 + " WHERE `Attribute`=\'" + attribute + "\'";
 		
-		exists = checkIfTableExists(tableName);
-		
-		return exists;
+		return checkIfExists(query);
 	}
-
-	static private boolean checkIfSensorReadingExistsQuery(String instrument, String serial, String timeStamp){
-		boolean readingExists = false;
-
+	
+	/**
+	 * This function calls a query which checks if a sensor Reading table for a specified instrument
+	 * exists in the database.
+	 * @param instrument - name of the instrument
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean checkIfSensorReadingTableExistsQuery(String instrument){
 		String tableName = "SensorReading_" + instrument;
+		
+		return checkIfTableExists(tableName);
+	}
+	
+	/**
+	 * This function calls a query function which checks if a SensorReading stored in an instruments 
+	 * corresponding sensorReadings table exists 
+	 * @param instrument - name of the instrument
+	 * @param serial - serial number associated with the instrument
+	 * @param timeStamp - time stamp associated with the sensorReading to be checked
+	 * @return <b>true</b> - if exists<br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	static private boolean checkIfSensorReadingExistsQuery(String instrument, String serial, String timeStamp){
+
+		String tableName = "SensorReading_" + instrument; //name of sensor reading table
 		
 		String query = "SELECT COUNT(*) "
 			  + "FROM `" + tableName + "` "
 			  + "WHERE `Instrument` = \'" + instrument + "\' AND "
 			  + "`Serial Number` = '" + serial + "' AND `ReadTime` = \'" + timeStamp + "\'";
 		
-		readingExists = checkIfExists(query);
-
-		return readingExists;
+		return checkIfExists(query);
 	}
-	
-
 }
 
 

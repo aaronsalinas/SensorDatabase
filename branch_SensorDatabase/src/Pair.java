@@ -1,6 +1,6 @@
 /**
- * Standard templated Pair class used to store a pair of data
- * @author aaronsalinas
+ * Standard template Pair class used to store a pair of data
+ * @author Aaron D. Salinas
  *
  * @param <Key>
  * @param <Value>

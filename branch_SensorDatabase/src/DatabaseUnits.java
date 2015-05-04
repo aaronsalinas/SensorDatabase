@@ -65,6 +65,11 @@ public class DatabaseUnits {
 	
 	static private List<String> primitiveUnits = new ArrayList<>(Arrays.asList(INT_UNIT, DOUBLE_UNIT, BOOL_UNIT, CHARACTER_UNIT, DATETIME_UNIT));
 
+	/**
+	 * This function checks if a custom varchar or char units defined are of the proper type/format
+	 * @param dataType
+	 * @return 
+	 */
 	static public boolean validDatabaseDatatype(String dataType){
 		
 		for(int i = 0; i < primitiveUnits.size(); i++){

@@ -14,6 +14,7 @@ public class SensorDataProcessing{
 	private String instrument;
 	private String serial;
 	private String timeStamp;
+	private boolean validFile = false;
 	private ArrayList<Pair<String, String> > ADCPCurrentData = new ArrayList<Pair<String, String> >();
 	
 	/* Stores ADCP Attribute and Type (Attribute, Data Type) */
@@ -31,16 +32,21 @@ public class SensorDataProcessing{
 	 * @param file
 	 */
 	public SensorDataProcessing(String file){
+		//Assign default values
 		filename = file;
 		instrument = "";
 		serial = "";
 		timeStamp= "";
-		try{
-			if(fileExists(filename)){
+		
+		//Try to store the information if the file is valid
+		if(fileExists(filename) && isValidFile()){
+			try{
 				storeInformation(filename);
+				
+			}catch(Exception exc){
+				validFile = false;
+				System.out.println("ERROR READING FILE!");
 			}
-		}catch(IOException exc){
-			System.out.println("File Not Opened!");
 		}
 	}
 	
@@ -59,13 +65,46 @@ public class SensorDataProcessing{
 		}
 	}
 	
+	private boolean validateSensorReadFile(){
+		boolean valid = true;
+		
+		if(fileExists(filename)){
+			BufferedReader br = null;
+			String sCurrentLine;
+			
+			try {
+				br = new BufferedReader(new FileReader(filename));
+				int idx = 0;
+				while((sCurrentLine = br.readLine()) != null && valid && idx < 10){
+					if(idx == 0 || idx == 9){
+						if(!sCurrentLine.startsWith("*")){
+							valid = false;
+						}
+					}else{
+						if(!sCurrentLine.startsWith("**")){
+							valid = false;
+						}
+					}
+					
+					idx++;
+				}
+				br.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return valid;
+	}
+	
 	/**
 	 * This function parses a file storing sensor readings and stores all of the information
 	 * as member variables for later reference for the user.
 	 * @param fileName
 	 * @throws IOException
 	 */
-	public void storeInformation(String fileName) throws IOException{
+	public void storeInformation(String fileName) throws Exception{
 		BufferedReader br = null;
 		String sCurrentLine;
 		
@@ -308,7 +347,7 @@ public class SensorDataProcessing{
 	 * @param s		string passed in to check if integer
 	 * @return true
 	 */
-	public static boolean isInteger(String s) {
+	public boolean isInteger(String s) {
 	    if(s.isEmpty()) return false;
 	    for(int i = 0; i < s.length(); i++) {
 	        if(i == 0 && s.charAt(i) == '-') {
@@ -320,7 +359,17 @@ public class SensorDataProcessing{
 	    return true;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isValidFile(){
+		return validateSensorReadFile();
+	}
 	
+	/**
+	 * 
+	 */
 	public void testPrint(){
 		
 		System.out.println("Instrument: " + instrument);
@@ -341,12 +390,19 @@ public class SensorDataProcessing{
 		for (int i = 0; i < sensorReadingRowAttrTypeList.size(); i++){
 			System.out.println(i + ": \'" + sensorReadingRowAttrTypeList.get(i).first + "\' \'" + sensorReadingRowAttrTypeList.get(i).second + "\'");
 		}
+
+		
+		System.out.println("------------sensorReadValues-----------------");
+		for (int i = 0; i < realTypesList.size(); i++){
+			System.out.println(realTypesList.get(i).toString());
+		}
+		
+		
 		
 		System.out.println("------------sensorReadValues-----------------");
 		for (int i = 0; i < sensorReadValues.size(); i++){
 			System.out.println(sensorReadValues.get(i).toString());
 		}
-		System.out.println("---------------------------------------------");
 		
 	}
 	

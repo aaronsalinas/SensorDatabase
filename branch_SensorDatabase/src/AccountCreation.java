@@ -9,6 +9,8 @@
  * Created: 4/28/2015
  * Modified:4/30/2015
 ******************************************************************************/
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,8 +21,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
-public class AccountCreation extends JFrame{
+public class AccountCreation extends JPanel{
 	
 	private static final long serialVersionUID = 1L;
 	/**************************************************************************
@@ -29,10 +32,7 @@ public class AccountCreation extends JFrame{
 	 * Pre: Valid login is passed into the constructor
 	 * Post: Instantiates a new instance of the AccountCreation class.
 	 *************************************************************************/
-	public AccountCreation(Login originalLoginMenu){
-		//Sets the mainMenu data member to the login passed in
-		mainMenu = originalLoginMenu;
-		//Init the window
+	public AccountCreation(){
 		init();
 	}
 	
@@ -47,108 +47,77 @@ public class AccountCreation extends JFrame{
 	 *************************************************************************/
 	private void init() {
 		
-		//Instantiate the new frame.
-		myFrame = new JFrame();
-		//Set default close operation
-		myFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//Set the title
-		myFrame.setTitle("Create New Databse Account");
-
-		//instantiate the new JPanel with size 350x300
-		panel = new JPanel(null);
-		panel.setSize(350, 300);
+		//Instantiate the new panel
+		setLayout(new GridBagLayout());
+		setBorder(new TitledBorder("Register new user"));
 		
-		//First Name label
-		firstNameLabel = new JLabel("First name");
-		firstNameLabel .setBounds(10, 10, 120, 25);
-		panel.add(firstNameLabel);
+		myConstraints = new GridBagConstraints();
+		
+		myConstraints.gridx = 0;
+		myConstraints.gridy = 0;
+		
+		
+		add(new JLabel("First Name"), myConstraints);
+		myConstraints.gridy++;
+		add(new JLabel("Last name"), myConstraints);
+		myConstraints.gridy++;
+		add(new JLabel("Username"), myConstraints);
+		myConstraints.gridy++;
+		add(new JLabel("Password"), myConstraints);
+		myConstraints.gridy++;
+		add(new JLabel("Confirm Password"), myConstraints);
+		myConstraints.gridy++;
+		add(new JLabel("Email Address"), myConstraints);
+		myConstraints.gridy++;
+		add(new JLabel("Confirm Address"), myConstraints);
+		
+		myConstraints.gridx++;
+		myConstraints.gridy = 0;
+		myConstraints.gridwidth = 2;
+		myConstraints.fill = GridBagConstraints.HORIZONTAL;
+		myConstraints.weightx = 1;
+		
 
 		//First name text field
-		firstNameText = new JTextField(20);
-		firstNameText.setBounds(130, 10, 200, 25);
-		panel.add(firstNameText);
-		
-		
-		//Last name label
-		lastNameLabel = new JLabel("Last name");
-		lastNameLabel .setBounds(10, 40, 120, 25);
-		panel.add(lastNameLabel);
+		firstNameText = new JTextField(25);
+		add(firstNameText, myConstraints);
+		myConstraints.gridy++;
 
 		//Last name text field
-		lastNameText = new JTextField(20);
-		lastNameText.setBounds(130, 40, 200, 25);
-		panel.add(lastNameText);
-		
-		
-		//User name label
-		usernameLabel = new JLabel("Username");
-		usernameLabel.setBounds(10, 70, 120, 25);
-		panel.add(usernameLabel);
+		lastNameText = new JTextField(25);
+		add(lastNameText, myConstraints);
+		myConstraints.gridy++;
 
 		//Username text field
-		usernameText = new JTextField(20);
-		usernameText.setBounds(130, 70, 200, 25);
-		panel.add(usernameText);
-		
-		
-		//Password Label
-		passwordLabel = new JLabel("Password");
-		passwordLabel.setBounds(10, 100, 120, 25);
-		panel.add(passwordLabel);
+		usernameText = new JTextField(25);
+		add(usernameText, myConstraints);
+		myConstraints.gridy++;
 
 		//Password Text field
-		passwordText = new JPasswordField(20);
-		passwordText.setBounds(130, 100, 200, 25);
-		panel.add(passwordText);
-		
-		
-		//re enter password Label
-		passwordCheckLabel = new JLabel("Confirm Password");
-		passwordCheckLabel.setBounds(10, 130, 120, 25);
-		panel.add(passwordCheckLabel);
+		passwordText = new JPasswordField(25);
+		add(passwordText, myConstraints);
+		myConstraints.gridy++;
 
 		//re enter password field
-		passwordCheckText = new JPasswordField(20);
-		passwordCheckText.setBounds(130, 130, 200, 25);
-		panel.add(passwordCheckText);
-		
-		
-		//email label
-		emailLabel = new JLabel("Email");
-		emailLabel.setBounds(10, 160, 120, 25);
-		panel.add(emailLabel);
+		passwordCheckText = new JPasswordField(25);
+		add(passwordCheckText, myConstraints);
+		myConstraints.gridy++;
 
 		//email text field
-		emailText = new JTextField(20);
-		emailText.setBounds(130, 160, 200, 25);
-		panel.add(emailText);
-		
-		
-		//re enter label
-		emailCheckLabel = new JLabel("Confirm Email");
-		emailCheckLabel.setBounds(10, 190, 120, 25);
-		panel.add(emailCheckLabel);
+		emailText = new JTextField(25);
+		add(emailText, myConstraints);
+		myConstraints.gridy++;
 
 		//re enter email text field
-		emailCheckText = new JTextField(20);
-		emailCheckText.setBounds(130, 190, 200, 25);
-		panel.add(emailCheckText);
+		emailCheckText = new JTextField(25);
+		add(emailCheckText, myConstraints);
 		
 		//Create Account Button
 		addCreateButton();
 		
 		//Cancel Button
-		addCancelButton();
-		
-		//Add panel to frame
-		myFrame.add(panel);
-		//Do not need to see this Window at the beginning of the program
-		myFrame.setVisible(false);
-		myFrame.setFocusable(true);
-		myFrame.setSize(350, 300);
+		addResetButton();
 	}
-	
-	/*****************************Buttons Makers******************************/
 	
 	/**************************************************************************
 	 * Description: Method that creates the Create Account button and adds the
@@ -161,18 +130,24 @@ public class AccountCreation extends JFrame{
 	 *       to the panel.
 	 *************************************************************************/
 	private void addCreateButton(){
+		
+		myConstraints.gridx = 1;
+		myConstraints.gridy++;
+		myConstraints.gridwidth = 1;
+		myConstraints.weightx = 0;
+		myConstraints.fill = GridBagConstraints.NONE;
+		
 		//Create the Create Account Button and set bounds
 		createButton = new JButton("Create Account");
-		createButton.setBounds(25, 230, 150, 25);
+		
 		//Define the action associated with the button
 		createButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				if(e.getActionCommand().equals("Create Account")){
 					if(checkAttributes()){
-						printInformation();
 						if(addNewAccount()){
-							JOptionPane.showMessageDialog(null, "Account Created");
-							returnToLogin();	
+							JOptionPane.showMessageDialog(null, "Account Created");	
+							clearInformation();
 						}
 						else{
 							JOptionPane.showMessageDialog(null, "Account Creation Failed");
@@ -182,7 +157,7 @@ public class AccountCreation extends JFrame{
 			}
 		});
 		//Add it to the panel
-		panel.add(createButton);
+		add(createButton, myConstraints);
 	}
 	
 	/**************************************************************************
@@ -195,22 +170,21 @@ public class AccountCreation extends JFrame{
 	 *       return to the main screen when it is pressed. Then adds it to the
 	 *       panel.
 	 *************************************************************************/
-	private void addCancelButton(){
+	private void addResetButton(){
+		myConstraints.gridx++;
 		//Create the Cancel Button and set bounds
-		cancelButton = new JButton("Cancel");
-		cancelButton.setBounds(200, 230, 100, 25);
+		resetButton = new JButton("Reset");
 		//Define the action associated with it
-		cancelButton.addActionListener(new ActionListener() {
+		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				if(e.getActionCommand().equals("Cancel")){
-					returnToLogin();
+				if(e.getActionCommand().equals("Reset")){
+					clearInformation();
 				}
 			}
 		});
 		//Add it to the panel
-		panel.add(cancelButton);
+		add(resetButton, myConstraints);
 	}
-	/*****************************Buttons Makers******************************/
 	
 	/**************************************************************************
 	 * Description: Method that checks the validity of the passwords entered
@@ -325,69 +299,25 @@ public class AccountCreation extends JFrame{
 									  		 		emailText.getText().trim());
 	}
 	
-	/**************************************************************************
-	 * Description: Returns to the login window when called
-	 * Return Type: void
-	 * Pre: None
-	 * Post: Hides this window and displays the login window
-	 *************************************************************************/
-	private void returnToLogin(){
-		this.hideScreen();
-		mainMenu.showScreen();
-	}
 	
 	/**************************************************************************
-	 * Description: Hides this window
-	 * Return Type: void
-	 * Pre: None
-	 * Post: Hides this window
-	 *************************************************************************/
-	public void hideScreen(){
-		myFrame.setVisible(false);
-	}
-	
-	/**************************************************************************
-	 * Description: Displays this window
-	 * Return Type: void
-	 * Pre: None
-	 * Post: Displays this window
-	 *************************************************************************/
-	public void showScreen(){
-		myFrame.setVisible(true);
-	}
-	
-	/**************************************************************************
-	 * Description: Debug function to check what values the JTextFields are
-	 *              reading in
+	 * Description: Function that clears all fields 
 	 * Return Type: void
 	 * Pre: None
 	 * Post: Prints debug info to the console
 	 *************************************************************************/
-	@SuppressWarnings("deprecation")
-	private void printInformation(){
-		System.out.println(firstNameText.getText());
-		System.out.println(lastNameText.getText());
-		System.out.println(usernameText.getText());
-		System.out.println(passwordText.getText());
-		System.out.println(emailText.getText());
+	private void clearInformation(){
+		firstNameText.setText("");
+		lastNameText.setText("");
+		usernameText.setText("");
+		emailText.setText("");
+		emailCheckText.setText("");
+		passwordText.setText("");
+		passwordCheckText.setText("");
+		
 	}
 	
-	//all Private data members of the class
-	//login to store the original menu
-	private Login mainMenu;
-	
-	//JFrame and JPanel on which we display information
-	private JFrame myFrame;
-	private JPanel panel;
-	
-	//JLabels for each field that needs to be filled out
-	private JLabel firstNameLabel;
-	private JLabel lastNameLabel;
-	private JLabel usernameLabel;
-	private JLabel passwordLabel;
-	private JLabel passwordCheckLabel;
-	private JLabel emailLabel;
-	private JLabel emailCheckLabel;
+	private GridBagConstraints myConstraints;
 	
 	//JTextFields for entering data
 	private JTextField firstNameText;
@@ -401,6 +331,6 @@ public class AccountCreation extends JFrame{
 	private JPasswordField passwordCheckText;
 	
 	//JButtons for navigation and user logic
-	private JButton cancelButton;
+	private JButton resetButton;
 	private JButton createButton;
 }
