@@ -136,9 +136,9 @@ public class DatabaseSearchBySerialTime extends JPanel{
 				String formattedBeginValue = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(beginValue);
 				Date endValue = (Date)endSpinner.getValue();
 				String formattedEndValue = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(endValue);
-				if(SensorDatabaseAccess.checkIfADCPCurrentTableExists(instrument)){
+				if(SensorDatabaseAccess.checkIfSensorReadingTableExists(instrument)){
 					outputDisplay.setText("");
-					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(instrument)){
+					for(String item : SensorDatabaseAccess.toListSensorReadingAttributes(instrument)){
 						outputDisplay.append(item + " ");
 					}
 					outputDisplay.append("\n");

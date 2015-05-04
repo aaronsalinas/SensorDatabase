@@ -70,7 +70,7 @@ public class DatabaseSearchByInstrumentAll extends JPanel{
 				//Set "selectedInstrument" to the item selected by the user
 				String selectedInstrument = (String) instrumentDropDown.getSelectedItem();
 				outputDisplay.setText("");
-				for(String item : SensorDatabaseAccess.toListADCPTableAttributes(selectedInstrument)){
+				for(String item : SensorDatabaseAccess.toListSensorReadingAttributes(selectedInstrument)){
 					outputDisplay.append(item + " ");
 				}
 				outputDisplay.append("\n");

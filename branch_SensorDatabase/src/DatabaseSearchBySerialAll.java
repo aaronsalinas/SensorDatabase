@@ -106,9 +106,9 @@ public class DatabaseSearchBySerialAll extends JPanel{
 			public void actionPerformed(ActionEvent e){
 				//sets "selectedSerial" to the item selected by the user
 				String selectedSerial = (String) serialDropDown.getSelectedItem();
-				if(SensorDatabaseAccess.checkIfADCPCurrentDataExists(instrument, selectedSerial)){
+				if(SensorDatabaseAccess.checkIfSensorReadingTableExists(instrument)){
 					outputDisplay.setText("");
-					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(instrument)){
+					for(String item : SensorDatabaseAccess.toListSensorReadingAttributes(instrument)){
 						outputDisplay.append(item + " ");
 					}
 					outputDisplay.append("\n");

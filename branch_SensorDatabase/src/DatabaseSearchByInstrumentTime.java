@@ -101,9 +101,9 @@ public class DatabaseSearchByInstrumentTime extends JPanel{
 				Date endValue = (Date)endSpinner.getValue();
 				String formattedEndValue = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(endValue);
 				
-				if(SensorDatabaseAccess.checkIfADCPCurrentTableExists(selectedInstrument)){
+				if(SensorDatabaseAccess.checkIfSensorReadingTableExists(selectedInstrument)){
 					outputDisplay.setText("");
-					for(String item : SensorDatabaseAccess.toListADCPTableAttributes(selectedInstrument)){
+					for(String item : SensorDatabaseAccess.toListSensorReadingAttributes(selectedInstrument)){
 						outputDisplay.append(item + " ");
 					}
 					outputDisplay.append("\n");
