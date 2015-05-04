@@ -3,7 +3,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,6 +67,7 @@ public class DatabaseSearchByInstrumentTime extends JPanel{
 	
 	private void initInstrumentDropDown(){
 		myConstraints.gridx=0;
+		myConstraints.gridwidth = 2;
 		add(new JLabel("Instrument List"), myConstraints);
 		myConstraints.gridy++;
 		for(String item : SensorDatabaseAccess.toListAllInstruments()){
