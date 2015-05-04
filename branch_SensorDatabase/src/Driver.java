@@ -131,6 +131,14 @@ public class Driver{
 		serialSearchMenu.add(serialAllDataItem);
 		
 		JMenuItem serialTimeframeItem = new JMenuItem("Timeframe");
+		serialTimeframeItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent actionEvent) {
+			    initPanel.removeAll();
+			    myFrame.add(new DatabaseSearchBySerialTime());
+			    myFrame.revalidate();
+			    myFrame.repaint();
+		    }
+		});
 		serialSearchMenu.add(serialTimeframeItem);
 		
 		JMenu instrumentSearchMenu = new JMenu("Instrument by...");
