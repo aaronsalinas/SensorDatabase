@@ -103,7 +103,7 @@ public class DatabaseSearchByInstrumentCurrent extends JPanel{
 		//scroll bars to appear as needed, as well as setting the bounds
 		scrollingDisplay = new JScrollPane(outputDisplay);
 		scrollingDisplay.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollingDisplay.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollingDisplay.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		//Add the JScrollPane to the panel
 		add(scrollingDisplay,myConstraints);
 	}
