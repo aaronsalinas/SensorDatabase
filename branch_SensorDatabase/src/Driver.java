@@ -30,7 +30,12 @@ public class Driver{
 	public Driver(){
 		myFrame = new JFrame();
 		myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		myFrame.setTitle("Database Access");
+		if(Database.checkIfDatabaseConnect()){
+			myFrame.setTitle("Database:Connected");
+		}
+		else{
+			myFrame.setTitle("Database:Disconnected");
+		}
 		loggedIn = false;
 		loginScreen = new Login();
 		
@@ -142,6 +147,14 @@ public class Driver{
 		instrumentSearchMenu.add(instrumentCurrentDataItem);
 		
 		JMenuItem instrumentAllDataItem = new JMenuItem("All Data");
+		instrumentAllDataItem.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent actionEvent) {
+			    initPanel.removeAll();
+			    myFrame.add(new DatabaseSearchByInstrumentAll());
+			    myFrame.revalidate();
+			    myFrame.repaint();
+		    }
+		});
 		instrumentSearchMenu.add(instrumentAllDataItem);
 		
 		JMenuItem instrumentTimeframeItem = new JMenuItem("Timeframe");
