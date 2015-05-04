@@ -47,7 +47,7 @@ public class DatabaseSearchEngine extends JFrame{
 	 * 		 indicating that the user is an administrator and attaching the
 	 * 		 administrator browser to the search engine
 	 *************************************************************************/
-	public DatabaseSearchEngine(AdminDatabaseBrowser attachmentBrowser){
+	public DatabaseSearchEngine(AdminAddFile attachmentBrowser){
 		adminBrowser = attachmentBrowser;
 		isAdmin = true;
 		init();
@@ -397,10 +397,8 @@ public class DatabaseSearchEngine extends JFrame{
 						}
 
 						outputDisplay.append("\n");
-						for(ArrayList<String> touples : SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(selectedInstrument, selectedSerial)){
-							for(String item : touples){
-								outputDisplay.append(item + " | ");
-							}
+						for(String touples : SensorDatabaseAccess.toListADCPCurrentDataInstrSerial(selectedInstrument, selectedSerial)){
+							outputDisplay.append(touples + " | ");
 							outputDisplay.append("\n");
 						}
 					}
@@ -465,7 +463,6 @@ public class DatabaseSearchEngine extends JFrame{
 				//the adminBrowser
 				if(e.getActionCommand().equals("Admin Menu")){
 					hideScreen();
-					adminBrowser.showScreen();
 				}
 			}
 		});
@@ -698,7 +695,7 @@ public class DatabaseSearchEngine extends JFrame{
 	private JButton searchByBothButton;
 	
 	//AdminDatabaseBrowser in case the person using the system is an administrator
-	private AdminDatabaseBrowser adminBrowser;
+	private AdminAddFile adminBrowser;
 	//Boolean to indicate if the user is an administrator
 	private boolean isAdmin;
 	
