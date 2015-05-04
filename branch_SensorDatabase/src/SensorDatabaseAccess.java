@@ -1146,7 +1146,7 @@ public class SensorDatabaseAccess extends Database{
 		try{
 			//3, Execute SQL query
 			query = "DELETE FROM InstrumentSerial WHERE Instrument = '" + instrument + "' "
-					+ "AND Serial = '" + serial + "';";	
+					+ "AND `Serial Number` = '" + serial + "';";	
 			
 			myRs = myStmt.executeUpdate(query); //Execute Query (delete instrument from database)	
 		}
