@@ -7,6 +7,7 @@
  * Modified:4/30/2015
 ******************************************************************************/
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -55,7 +56,7 @@ public class AdminAddFile extends JPanel{
 		fileChooser = new JFileChooser();
 		//Set the filter so we can only open .asc and .txt files
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	        "ASC & TXT", "acs", "txt");
+	        "ASC & TXT", "asc", "txt");
 	    //apply the filter
 	    fileChooser.setFileFilter(filter);
 	    //Set the returnVal to the type of file being opened
@@ -63,7 +64,13 @@ public class AdminAddFile extends JPanel{
 	    //If the returnVal is of the approved format, store the absolute path.
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	inputFileName = fileChooser.getSelectedFile().getAbsolutePath();
-	    	new StoreSensorData(inputFileName);
+	    	StoreSensorData newData = new StoreSensorData(inputFileName);
+	    	if(!newData.isValidFile()){
+	    		JOptionPane.showMessageDialog(null, "Invalid File");
+	    	}
+	    	else if(!newData.fileStored()){
+	    		JOptionPane.showMessageDialog(null, "Information not stored correctly");
+	    	}
 	    }
 	}
 	
