@@ -2,7 +2,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
+/******************************************************************************
+ * Filename: AdminDatabaseAccess.java
+ * Author: Aaron D. Salinas (Aaron_Salinas@baylor.edu)
+ * Description: This class holds constant variables which represent all of the
+ * various data types which the database can operate with. 
+ * information is stored in the database.
+ * Created: 4/28/2015
+ * Modified:5/4/2015
+******************************************************************************/
 public class DatabaseUnits {
 		
 	/* ******************************* /

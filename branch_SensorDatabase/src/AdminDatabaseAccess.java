@@ -1,3 +1,14 @@
+/******************************************************************************
+ * Filename: AdminDatabaseAccess.java
+ * Author: Aaron D. Salinas (Aaron_Salinas@baylor.edu)
+ * Description: This class holds methods that access the Administrative information
+ * stored in the database. Functionality includes ability to add/modify/delete
+ * administrative information as well as ability to check if any specific
+ * information is stored in the database.
+ * Created: 4/28/2015
+ * Modified:5/4/2015
+******************************************************************************/
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,7 +33,8 @@ public class AdminDatabaseAccess extends Database{
 	 * @param firstName
 	 * @param lastName
 	 * @param email
-	 * @return
+	 * @return <b>true</b> - admin added into database <br>
+	 * 		   <b>false</b> - admin not added
 	 */
 	public static boolean addAdministrator(String username, String password, String firstName, 
 																		String lastName, String email){
@@ -129,7 +141,6 @@ public class AdminDatabaseAccess extends Database{
 		
 		return valid;
 	}
-	
 	
 	
 	/* ****************************************************************
@@ -372,6 +383,7 @@ public class AdminDatabaseAccess extends Database{
 		
 		return success;
 	}
+	
 	
 	private static boolean changePasswordQuery(String username, String newPassword){
 		boolean success = true;

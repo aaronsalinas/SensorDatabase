@@ -1,12 +1,22 @@
 import java.io.File;
 import java.util.ArrayList;
-
+/******************************************************************************
+ * Filename: StoreSensorData.java
+ * Author: Aaron D. Salinas (Aaron_Salinas@baylor.edu)
+ * Description: This class attempts to store information from a Sensor
+ * Readings file into the database. The class holds boolean values for 
+ * whether a file is in an invalid format/doesn't exists, as well as if the 
+ * information from the file was successfully stored in the database
+ * Created: 4/28/2015
+ * Modified:5/4/2015
+******************************************************************************/
 public class StoreSensorData {
 	
 	private SensorDataProcessing data;
 	private String fileName = "";
 	private boolean stored = false;
 	private boolean DBAccess = false;
+	private boolean validFile = false;
 	
 	/**
 	 * Default constructor
@@ -26,18 +36,22 @@ public class StoreSensorData {
 			stored = storeInfoInDB(); //Store information into database
 			//Test Print
 			if(stored){
+				validFile = true;
 				System.out.println("Successful Store");
 			}else{
 				System.out.println("ERROR: Unsuccessful Store!");
 			}
 		}
 		else{
+			validFile = true;
 			System.out.println("Invalid File");
 		}
 	}
 	
 	/**
-	 * 
+	 * This function calls functions that store information in the database from a given 
+	 * file. If there is an error in storing the information for any reason the function 
+	 * undoes all changes to the database restoring it into its original state.
 	 * @return
 	 */
 	private boolean storeInfoInDB(){
@@ -234,5 +248,23 @@ public class StoreSensorData {
 		return valid;
 	}
 	
+	/**
+	 * This function returns the value if a file input into the 
+	 * class is of the valid format or not
+	 * @return <b>true</b> - file valid <br>
+	 * 		   <b>false</b>	- file invalid/doesn't exist
+	 */
+	public boolean isValidFile(){
+		return validFile;
+	}
 	
+	/**
+	 * This function returns true if a files information was successfully stored 
+	 * into the database. 
+	 * @return <b>true</b> - files data stored in database <br>
+	 * 		   <b>false</b> - otherwise
+	 */
+	public boolean fileStored(){
+		return stored; 
+	}
 }

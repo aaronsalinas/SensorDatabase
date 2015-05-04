@@ -8,7 +8,14 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/******************************************************************************
+ * Filename: SensorDataProcessing.java
+ * Author: Aaron D. Salinas (Aaron_Salinas@baylor.edu)
+ * Description: This class holds functionality which parses a file in the 
+ * specific template of those that hold Sensor Readings and Sensor Information.
+ * Created: 4/28/2015
+ * Modified:5/4/2015
+******************************************************************************/
 public class SensorDataProcessing{
 	private String filename;
 	private String instrument;

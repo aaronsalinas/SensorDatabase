@@ -8,6 +8,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/******************************************************************************
+ * Filename: SensorDatabaseAccess.java
+ * Author: Aaron D. Salinas (Aaron_Salinas@baylor.edu)
+ * Description: This class holds methods that are used to interact with all 
+ * information in the database relevant to ADCP Sensor's and their correspoding
+ * attributes and readings. 
+ * Created: 4/28/2015
+ * Modified:5/4/2015
+******************************************************************************/
 public class SensorDatabaseAccess extends Database{
 	
 

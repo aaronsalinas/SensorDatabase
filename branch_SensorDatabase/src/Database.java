@@ -11,12 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This class stores functionality for interacting with the 
- * Sensor Database
- * @author Aaron D. Salinas
- * @version May 2, 2015 5:37 PM
- */
+/******************************************************************************
+ * Filename: Database.java
+ * Author: Aaron D. Salinas (Aaron_Salinas@baylor.edu)
+ * Description: This class holds general functions that interact with the database.
+ * Some of these functions include creating/deleting tables, updating tables,
+ * and retrieving tuples and table column attributes.
+ * Created: 4/28/2015
+ * Modified:5/4/2015
+******************************************************************************/
 class Database implements DatabaseInformation{	
 	
 	/* *******************************************************
