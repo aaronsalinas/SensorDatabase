@@ -3,7 +3,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +48,7 @@ public class DatabaseSearchBySerialTime extends JPanel{
 		add(new JLabel("YYYY:MM:dd HH:mm:ss"),myConstraints);
 		myConstraints.gridy++;
 		beginSpinner = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor beginEditor = new JSpinner.DateEditor(beginSpinner, "YYYY:MM:dd HH:mm:ss");
+		JSpinner.DateEditor beginEditor = new JSpinner.DateEditor(beginSpinner, "yyyy-MM-dd HH:mm:ss");
 		beginSpinner.setEditor(beginEditor);
 		add(beginSpinner, myConstraints);
 		
@@ -60,7 +59,7 @@ public class DatabaseSearchBySerialTime extends JPanel{
 		add(new JLabel("YYYY:MM:dd HH:mm:ss"),myConstraints);
 		myConstraints.gridy++;
 		endSpinner = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endSpinner, "YYYY:MM:dd HH:mm:ss");
+		JSpinner.DateEditor endEditor = new JSpinner.DateEditor(endSpinner, "yyyy-MM-dd HH:mm:ss");
 		endSpinner.setEditor(endEditor);
 		add(endSpinner, myConstraints);
 		myConstraints.gridy++;
